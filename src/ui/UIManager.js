@@ -806,42 +806,54 @@ export class UIManager {
 
       <div style="margin:16px 0;">
         <button id="success-tips-toggle" style="width:100%;padding:12px 16px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:12px;color:var(--accent-green);font-size:14px;font-weight:700;cursor:pointer;text-align:left;transition:all 0.2s;">
-          📗 성공 공식 보기 ▼
+          📗 성공 공식 보기 (추천 조합) ▼
         </button>
         <div id="success-tips-content" class="hidden" style="margin-top:8px;padding:16px;background:rgba(255,255,255,0.02);border-radius:12px;border:1px solid rgba(255,255,255,0.06);font-size:12px;line-height:1.8;color:var(--text-secondary);">
-          <div style="font-size:14px;font-weight:700;color:var(--accent-green);margin-bottom:10px;">🏆 S등급 달성 공식</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-            <div style="padding:10px;background:rgba(255,255,255,0.02);border-radius:8px;">
-              <strong style="color:var(--accent-blue);">💧 수분 관리</strong><br>
-              • 토양 수분이 <strong>40% 이하</strong>면 즉시 관수<br>
-              • 장마철에는 <strong>관수 중지</strong> (과습 주의)<br>
-              • 시설 재배 시 자동관수 로봇 추천
+          <div style="font-size:14px;font-weight:700;color:var(--accent-green);margin-bottom:12px;">🏆 S등급 추천 조합</div>
+
+          <div style="display:grid;gap:8px;">
+            <div style="padding:12px;background:rgba(255,255,255,0.03);border-radius:10px;border-left:3px solid #10b981;">
+              <div style="font-weight:700;color:var(--text-primary);margin-bottom:4px;">🍓 딸기 S등급 공식 <span style="font-size:10px;color:var(--accent-green);">(수익 최고)</span></div>
+              <div>🌍 중부내륙/남부내륙 + 🟤 충적양토 + 🏠 <strong>단동 비닐하우스 필수</strong> + 🤖 자동관수</div>
+              <div style="color:var(--text-muted);font-size:11px;">9~10월 정식 → 이듬해 연속수확. 시설 없으면 동사! 시설비 투자 대비 수익률 최상</div>
             </div>
-            <div style="padding:10px;background:rgba(255,255,255,0.02);border-radius:8px;">
-              <strong style="color:var(--accent-amber);">🌿 비료 관리</strong><br>
-              • N(질소) <strong>40 이하</strong>면 투여<br>
-              • 작물별 NPK 비율이 자동 적용됨<br>
-              • 과다시비 주의 (N 200 상한)
+
+            <div style="padding:12px;background:rgba(255,255,255,0.03);border-radius:10px;border-left:3px solid #3b82f6;">
+              <div style="font-weight:700;color:var(--text-primary);margin-bottom:4px;">🌾 벼 안정 공식 <span style="font-size:10px;color:#3b82f6;">(안정 수익)</span></div>
+              <div>🌍 남부내륙/남부해안 + 🟤 논 글라이토 or 충적양토 + 🌿 <strong>노지 OK</strong></div>
+              <div style="color:var(--text-muted);font-size:11px;">4~5월 파종, 9~10월 수확. 담수 관리가 핵심. 태풍 시기(8월)만 주의</div>
             </div>
-            <div style="padding:10px;background:rgba(255,255,255,0.02);border-radius:8px;">
-              <strong style="color:#ef4444;">🌪️ 재해 대응</strong><br>
-              • 시설 재배 = 태풍·우박 피해 <strong>50~80% 감소</strong><br>
-              • 폭염 시 관수량 증가 필요<br>
-              • 서리: 노지 재배 시 동해 위험
+
+            <div style="padding:12px;background:rgba(255,255,255,0.03);border-radius:10px;border-left:3px solid #f59e0b;">
+              <div style="font-weight:700;color:var(--text-primary);margin-bottom:4px;">🌶️ 고추 고수익 공식 <span style="font-size:10px;color:#f59e0b;">(고위험 고수익)</span></div>
+              <div>🌍 남부내륙(대구) + 🟤 충적양토/사양토 + 🏠 <strong>비닐하우스 추천</strong> + 🤖 방제드론</div>
+              <div style="color:var(--text-muted);font-size:11px;">3~4월 모종, 7~10월 수확. 병해충 多 → 방제 필수. kg당 ₩15,000 고가</div>
             </div>
-            <div style="padding:10px;background:rgba(255,255,255,0.02);border-radius:8px;">
-              <strong style="color:var(--accent-green);">🌾 수확 타이밍</strong><br>
-              • <strong>harvest_ready</strong> 단계가 되면 즉시 수확<br>
-              • 수확 지연 시 품질 저하<br>
-              • 농부가 자동으로 수확하지만 수동도 가능
+
+            <div style="padding:12px;background:rgba(255,255,255,0.03);border-radius:10px;border-left:3px solid #8b5cf6;">
+              <div style="font-weight:700;color:var(--text-primary);margin-bottom:4px;">🍇 포도 프리미엄 공식 <span style="font-size:10px;color:#8b5cf6;">(장기 투자)</span></div>
+              <div>🌍 남부내륙 + 🟤 사양토 (배수 양호) + 🏠 <strong>유리 온실 최적</strong></div>
+              <div style="color:var(--text-muted);font-size:11px;">3월 발아 → 8~9월 수확. 생육 기간 길지만 kg당 ₩8,000. 저온 요구량 충족 필수</div>
+            </div>
+
+            <div style="padding:12px;background:rgba(255,255,255,0.03);border-radius:10px;border-left:3px solid #ec4899;">
+              <div style="font-weight:700;color:var(--text-primary);margin-bottom:4px;">🥔 감자 초보 공식 <span style="font-size:10px;color:#ec4899;">(쉬움)</span></div>
+              <div>🌍 고냉지/중부내륙 + 🟤 사양토/산악갈색토 + 🌿 <strong>노지 OK</strong></div>
+              <div style="color:var(--text-muted);font-size:11px;">3~4월 파종, 6~7월 수확. 재배 쉬움. 배수 좋은 땅이 핵심. 연작 피할 것</div>
+            </div>
+
+            <div style="padding:12px;background:rgba(255,255,255,0.03);border-radius:10px;border-left:3px solid #06b6d4;">
+              <div style="font-weight:700;color:var(--text-primary);margin-bottom:4px;">🍅 토마토 시설재배 공식 <span style="font-size:10px;color:#06b6d4;">(시설 필수)</span></div>
+              <div>🌍 중부내륙/남부내륙 + 🟤 충적양토 + 🏠 <strong>연동 비닐하우스 필수</strong> + 🤖 자동관수</div>
+              <div style="color:var(--text-muted);font-size:11px;">2~3월 정식. 시설 필수 작물. 연중 수확 가능. 병해 관리가 핵심</div>
             </div>
           </div>
-          <div style="margin-top:12px;padding:10px;background:rgba(16,185,129,0.06);border-radius:8px;border:1px solid rgba(16,185,129,0.15);">
-            <strong style="color:var(--accent-green);">💡 핵심 요약:</strong> 
-            적절한 시기에 심고 (${climate?.name.ko}의 무상기간 ${climate?.frostFreeDays || '?'}일 기준), 
-            물-비료를 꾸준히 관리하면서, 
-            극한기상 이벤트를 시설로 방어하고, 
-            수확 적기를 놓치지 마세요!
+
+          <div style="margin-top:12px;padding:10px;background:rgba(245,158,11,0.06);border-radius:8px;border:1px solid rgba(245,158,11,0.15);">
+            <strong style="color:var(--accent-amber);">⚠️ 공통 주의사항:</strong> 
+            연작(같은 작물 연속 재배) 시 병해 확률 <strong>+20%/회</strong> 증가. 
+            노지 재배는 태풍·우박 피해 100% 노출. 
+            시설비 투자는 1년 이상 운영 시 회수 가능.
           </div>
         </div>
       </div>
