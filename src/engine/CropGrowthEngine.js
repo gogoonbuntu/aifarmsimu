@@ -180,8 +180,8 @@ export class CropGrowthEngine {
       // 벼 담수 재배 관리 (Paddy flooding management)
       if (crop.requirements.water.needsFlooding) {
         const stage = plot.currentStage;
-        if (stage === 'vegetative' || stage === 'flowering') {
-          // 본답기: 담수 5~7cm 유지 → 토양수분을 FC 이상으로 유지
+        // 육묘기~분얼기~출수기: 담수 유지 (실제 논 관리: 이앙 직후부터 담수)
+        if (stage === 'germination' || stage === 'seedling' || stage === 'vegetative' || stage === 'flowering') {
           if (plot.soilMoisture < soil.properties.fieldCapacity * 1.1) {
             plot.soilMoisture = soil.properties.fieldCapacity * 1.2; // Auto-flooding
           }
