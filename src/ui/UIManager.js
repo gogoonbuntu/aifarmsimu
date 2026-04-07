@@ -168,6 +168,7 @@ export class UIManager {
   setupWizard() {
     this.buildWizardStepIndicators();
     this.renderWizardStep(1);
+    this.setupPresets();
 
     document.getElementById('wizard-next').addEventListener('click', () => {
       if (this.wizardStep < this.totalSteps) {
@@ -191,6 +192,88 @@ export class UIManager {
         this.updateWizardSteps();
         this.renderWizardStep(this.wizardStep);
       }
+    });
+  }
+
+  // ===== PRESET RECIPES =====
+  setupPresets() {
+    const presets = [
+      {
+        name: '🍓 딸기 S등급', tag: '수익 최고', color: '#10b981',
+        desc: '중부내륙 + 충적양토 + 단동 비닐하우스 + 딸기 3000m²',
+        climate: 'central_inland', soil: 'loam_alluvial', facility: 'vinyl_single',
+        crops: [{ id: 'strawberry', area: 3000 }],
+      },
+      {
+        name: '🌾 벼 안정 수익', tag: '안정', color: '#3b82f6',
+        desc: '남부내륙 + 논 글라이토 + 노지 + 벼 5000m²',
+        climate: 'south_inland', soil: 'paddy_gley', facility: 'open_field',
+        crops: [{ id: 'rice', area: 5000 }],
+      },
+      {
+        name: '🌶️ 고추 고수익', tag: '고위험 고수익', color: '#f59e0b',
+        desc: '남부내륙 + 충적양토 + 비닐하우스 + 고추 2000m²',
+        climate: 'south_inland', soil: 'loam_alluvial', facility: 'vinyl_single',
+        crops: [{ id: 'red_pepper', area: 2000 }],
+      },
+      {
+        name: '🍇 포도 프리미엄', tag: '장기 투자', color: '#8b5cf6',
+        desc: '남부내륙 + 사양토 + 유리온실 + 포도 2000m²',
+        climate: 'south_inland', soil: 'sandy_loam', facility: 'glass_venlo',
+        crops: [{ id: 'grape', area: 2000 }],
+      },
+      {
+        name: '🥔 감자 초보용', tag: '쉬움', color: '#ec4899',
+        desc: '고냉지 + 산악갈색토 + 노지 + 감자 3000m²',
+        climate: 'highland', soil: 'mountain_brown', facility: 'open_field',
+        crops: [{ id: 'potato', area: 3000 }],
+      },
+      {
+        name: '🌾🥬 복합 영농', tag: '분산 투자', color: '#06b6d4',
+        desc: '중부내륙 + 충적양토 + 비닐하우스 + 벼 2000m² + 배추 1500m² + 대파 1500m²',
+        climate: 'central_inland', soil: 'loam_alluvial', facility: 'vinyl_single',
+        crops: [{ id: 'rice', area: 2000 }, { id: 'napa_cabbage', area: 1500 }, { id: 'green_onion', area: 1500 }],
+      },
+    ];
+
+    const panel = document.getElementById('preset-panel');
+    panel.innerHTML = presets.map((p, i) => `
+      <div class="preset-card" data-idx="${i}" style="border-left:3px solid ${p.color};">
+        <div class="preset-card-header">
+          <strong>${p.name}</strong>
+          <span class="preset-tag" style="background:${p.color}20;color:${p.color};">${p.tag}</span>
+        </div>
+        <div class="preset-card-desc">${p.desc}</div>
+      </div>
+    `).join('');
+
+    // Toggle panel
+    document.getElementById('preset-btn')?.addEventListener('click', () => {
+      panel.classList.toggle('hidden');
+    });
+
+    // Apply preset
+    panel.querySelectorAll('.preset-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const idx = parseInt(card.dataset.idx);
+        const preset = presets[idx];
+
+        this.config.climate = climateRegistry.get(preset.climate);
+        this.config.soil = soilRegistry.get(preset.soil);
+        this.config.facility = facilityRegistry.get(preset.facility);
+        this.config.crops = preset.crops.map(c => ({
+          data: cropRegistry.get(c.id),
+          area: c.area,
+        }));
+        this.config.robots = [];
+
+        // Jump to step 6
+        panel.classList.add('hidden');
+        this.wizardStep = 6;
+        this.updateWizardSteps();
+        this.renderWizardStep(6);
+        document.getElementById('wizard-content').scrollTop = 0;
+      });
     });
   }
 
