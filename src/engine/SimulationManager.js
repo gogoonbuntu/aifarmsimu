@@ -97,10 +97,13 @@ export class SimulationManager {
     const startMonth = config.strategy?.startMonth || 3;
     this.timeManager.setStartMonth(startMonth);
     
-    // Deduct costs
-    if (config.facility && config.facility.cost) {
+    // Deduct costs (skip facility cost if reusing from previous cycle)
+    if (config.facility && config.facility.cost && !config.skipFacilityCost) {
       this.fund -= config.facility.cost;
       this.totalExpenses += config.facility.cost;
+      eventBus.emit('event_log', { type: 'info', message: `🏗️ 시설 신규 설치: ${config.facility.name.ko} (-₩${(config.facility.cost/10000).toLocaleString()}만원)` });
+    } else if (config.skipFacilityCost && config.facility) {
+      eventBus.emit('event_log', { type: 'success', message: `♻️ 기존 시설 재사용: ${config.facility.name.ko} (추가비용 없음)` });
     }
     if (config.robots) {
       for (const robot of config.robots) {

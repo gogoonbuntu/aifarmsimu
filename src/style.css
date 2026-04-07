@@ -1275,3 +1275,23 @@ body {
 .select-card, .crop-detail-card {
   position: relative;
 }
+
+/* Disabled soil card */
+.soil-disabled {
+  opacity: 0.4;
+  filter: grayscale(0.7);
+  pointer-events: auto;
+  cursor: not-allowed !important;
+}
+.soil-disabled:hover {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 2px rgba(239,68,68,0.2);
+}
+.unavail-badge {
+  display: block;
+  text-align: center;
+  font-size: 10px;
+  color: #ef4444;
+  font-weight: 600;
+  margin-bottom: 4px;
+}

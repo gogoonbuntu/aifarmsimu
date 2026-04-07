@@ -282,6 +282,10 @@ class App {
   }
 
   startSimulation(config) {
+    // If restarting with same facility, mark to skip cost
+    if (this.previousFacilityId && config.facility?.id === this.previousFacilityId) {
+      config.skipFacilityCost = true;
+    }
     this.simulation.initialize(config);
     this.isRunning = true;
 
@@ -331,7 +335,10 @@ class App {
       }
     }
 
-    // Reset simulation
+    // Reset simulation — remember previous facility for cost exemption
+    if (this.simulation?.config?.facility) {
+      this.previousFacilityId = this.simulation.config.facility.id;
+    }
     this.simulation.reset();
     this.isRunning = false;
 

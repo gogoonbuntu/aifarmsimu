@@ -439,14 +439,32 @@ export class UIManager {
     return regionSoils[climateId] || [];
   }
 
+  // 지역에 절대 존재할 수 없는 토양 판별
+  getSoilAvailability(climateId) {
+    // 각 기후의 존재 가능 토양 (추천 + 비추천이지만 존재는 가능)
+    const available = {
+      central_inland: ['loam_alluvial', 'clay_loam', 'paddy_gley', 'red_yellow', 'sandy_loam'],
+      central_east: ['sandy_loam', 'mountain_brown', 'loam_alluvial', 'paddy_gley'],
+      south_inland: ['loam_alluvial', 'clay_loam', 'paddy_gley', 'red_yellow', 'sandy_loam'],
+      south_coastal: ['loam_alluvial', 'sandy_loam', 'clay_loam', 'paddy_gley', 'red_yellow'],
+      jeju: ['volcanic_andisol', 'red_yellow', 'sandy_loam'],
+      highland: ['mountain_brown', 'sandy_loam', 'loam_alluvial'],
+    };
+    return available[climateId] || Object.keys(available).reduce((s, k) => [...s, ...available[k]], []);
+  }
+
   renderStep2_Soil(container) {
     let soils = soilRegistry.getAll();
     const recIds = this.config.climate ? this.getRecommendedSoils(this.config.climate.id) : [];
-    // Sort: recommended soils first
+    const availableIds = this.config.climate ? this.getSoilAvailability(this.config.climate.id) : soils.map(s => s.id);
+    // Sort: recommended first, then available, then unavailable
     soils = soils.sort((a, b) => {
       const aRec = recIds.includes(a.id) ? 0 : 1;
       const bRec = recIds.includes(b.id) ? 0 : 1;
-      return aRec - bRec;
+      if (aRec !== bRec) return aRec - bRec;
+      const aAvail = availableIds.includes(a.id) ? 0 : 1;
+      const bAvail = availableIds.includes(b.id) ? 0 : 1;
+      return aAvail - bAvail;
     });
 
     container.innerHTML = `
@@ -459,10 +477,15 @@ export class UIManager {
         ${soils.map(s => {
           const colorHex = '#' + s.color.toString(16).padStart(6, '0');
           const isRec = recIds.includes(s.id);
+          const isAvailable = availableIds.includes(s.id);
+          const climateName = this.config.climate?.name?.ko || '선택한 지역';
           return `
-          <div class="select-card ${this.config.soil?.id === s.id ? 'selected' : ''}" data-id="${s.id}">
+          <div class="select-card ${this.config.soil?.id === s.id ? 'selected' : ''} ${!isAvailable ? 'soil-disabled' : ''}" 
+               data-id="${s.id}" 
+               ${!isAvailable ? `title="${climateName}에는 존재하지 않는 토양입니다"` : ''}>
             ${this.docBtn('soils', s.id, s.name.ko)}
             ${isRec ? '<span class="rec-badge">⭐ 이 지역 추천</span>' : ''}
+            ${!isAvailable ? `<span class="unavail-badge">🚫 ${climateName} 미존재</span>` : ''}
             <div class="soil-color-icon" style="background:${colorHex}"></div>
             <div class="card-title">${s.name.ko}</div>
             <div class="card-desc">${s.texture}</div>
@@ -483,6 +506,11 @@ export class UIManager {
 
     container.querySelectorAll('.select-card').forEach(card => {
       card.addEventListener('click', () => {
+        if (card.classList.contains('soil-disabled')) {
+          const climateName = this.config.climate?.name?.ko || '선택한 지역';
+          this.showValidationMsg(`${climateName}에는 존재하지 않는 토양입니다. 다른 토양을 선택해주세요.`);
+          return;
+        }
         container.querySelectorAll('.select-card').forEach(c => c.classList.remove('selected'));
         card.classList.add('selected');
         this.config.soil = soilRegistry.get(card.dataset.id);

@@ -1,23 +1,18 @@
-# 🏔️ 산악갈색토 (Mountain Brown Soil) — Inceptisol (Udepts)
+# 🏔️ 산악갈색토 (Mountain Brown) — Inceptisol
 
-![산악갈색토](https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Mountain_soil_profile.jpg/320px-Mountain_soil_profile.jpg)
-*산악 토양 (Wikimedia)*
+![산악갈색토](https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=640&q=80)
+*강원도 산간 풍경*
 
-## USDA: Inceptisol (Udepts) · 토성: 양토~사양토
-pH **4.5~5.5** · 유기물 **4.5%** · CEC 12 · 유효토심 **50cm** (얕음)
-포장용수량 0.28 · 위조점 0.12 · 배수 양호
-
-## 양분: N 100 · P 50 · K 90 mg/kg
-
-![대관령 배추밭](https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Highland_cabbage_Korea.jpg/640px-Highland_cabbage_Korea.jpg)
-*대관령 고냉지 배추밭 (Wikimedia)*
+## USDA: Inceptisol (Udepts)
+산지 미숙 토양. 유효토심 **50cm** (얕음).  
+pH 4.5~5.5 · 유기물 4.5% · CEC 12 · 포장용수량 0.28
 
 ## 적합도
 채소 ★★★★☆ · 근채 ★★★★☆ · 과수 ★★★☆☆ · 벼 ★☆☆☆☆
 
-> **특징**: 유효토심이 50cm로 얕아 깊은 뿌리 작물 불리. 냉량 환경과 결합하여 **고냉지 배추, 감자** 재배에 특화.
+> **고냉지 배추·감자 특화 토양**: 냉량 환경과 결합하여 여름 채소에 최적.
 
-## 분포: 강원도 산간 (대관령, 평창, 태백, 해발 600m+)
+## 분포: **강원도 산간** — 대관령, 평창, 태백 (해발 600m+)
 
-## 참고
-국립농업과학원 흙토람, 강원도농업기술원.
+![고냉지밭](https://images.unsplash.com/photo-1584515933487-779824d29309?w=640&q=80)
+*고냉지 채소밭*
