@@ -846,26 +846,46 @@ export class UIManager {
         </div>
       </div>
 
-      <div style="margin:16px 0;">
-        <h4 style="margin-bottom:8px;font-size:13px;">📅 파종 시작월 선택</h4>
-        <div id="month-bar" style="display:flex;gap:4px;overflow-x:auto;padding:4px 0;">
-          ${[1,2,3,4,5,6,7,8,9,10,11,12].map(m => {
-            const selected = m === (this.config.strategy.startMonth || 3);
-            const climateId = climate?.id || 'central_inland';
-            const isRecommended = crops.some(c => {
-              const cal = c.data.calendar?.[climateId] || Object.values(c.data.calendar || {})[0];
-              return cal?.sowingMonth?.includes(m) || cal?.transplantMonth?.includes(m);
-            });
-            const t = climate?.monthly?.avgTemp?.[m-1] ?? '?';
-            const tMin = climate?.monthly?.minTemp?.[m-1] ?? '?';
-            return `<button class="month-btn ${selected ? 'month-active' : ''} ${isRecommended ? 'month-rec' : ''}" data-month="${m}">
-              <div style="font-weight:700;font-size:13px;">${m}월</div>
-              <div style="font-size:9px;opacity:0.7;">${t}°C</div>
-              ${isRecommended ? '<div style="font-size:8px;color:#10b981;">추천</div>' : `<div style="font-size:8px;opacity:0.5;">${tMin}°C</div>`}
-            </button>`;
-          }).join('')}
+      <div style="margin:16px 0;padding:14px;background:rgba(59,130,246,0.05);border:1px solid rgba(59,130,246,0.2);border-radius:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <h4 style="font-size:14px;margin:0;">📅 파종 시작월</h4>
+          <div style="font-size:10px;color:var(--text-muted);">
+            <span style="color:#10b981;font-weight:700;">● 추천</span> · <span style="color:#3b82f6;font-weight:700;">● 선택됨</span>
+          </div>
         </div>
-        <div id="start-month-info" style="font-size:11px;color:var(--text-muted);margin-top:6px;text-align:center;"></div>
+        <div id="month-bar" style="display:flex;gap:4px;overflow-x:auto;padding:4px 0;">
+          ${(() => {
+            // 작물 캘린더에서 추천 월 자동 감지
+            const climateId = climate?.id || 'central_inland';
+            const recMonths = new Set();
+            crops.forEach(c => {
+              const cal = c.data.calendar?.[climateId] || Object.values(c.data.calendar || {})[0];
+              (cal?.sowingMonth || []).forEach(m => recMonths.add(m));
+              (cal?.transplantMonth || []).forEach(m => recMonths.add(m));
+            });
+            // 추천 월이 없으면 기본 3월
+            const defaultMonth = recMonths.size > 0 ? Math.min(...recMonths) : 3;
+            // config에 설정되지 않았으면 추천 월을 기본값으로
+            if (!this.config.strategy.startMonth) {
+              this.config.strategy.startMonth = defaultMonth;
+            }
+            const currentMonth = this.config.strategy.startMonth;
+
+            return [1,2,3,4,5,6,7,8,9,10,11,12].map(m => {
+              const selected = m === currentMonth;
+              const isRec = recMonths.has(m);
+              const t = climate?.monthly?.avgTemp?.[m-1] ?? '?';
+              const tMin = climate?.monthly?.minTemp?.[m-1] ?? '?';
+              const frostWarn = typeof tMin === 'number' && tMin < 0;
+              return `<button class="month-btn ${selected ? 'month-active' : ''} ${isRec ? 'month-rec' : ''}" data-month="${m}">
+                <div style="font-weight:700;font-size:14px;">${m}월</div>
+                <div style="font-size:10px;${frostWarn ? 'color:#ef4444;' : 'opacity:0.7;'}">${t}°C</div>
+                ${isRec ? '<div style="font-size:9px;color:#10b981;font-weight:700;">✓ 추천</div>' : `<div style="font-size:9px;opacity:0.4;">최저 ${tMin}°C</div>`}
+              </button>`;
+            }).join('');
+          })()}
+        </div>
+        <div id="start-month-info" style="font-size:12px;margin-top:8px;text-align:center;font-weight:600;"></div>
       </div>
 
       <div class="confirm-crops">
