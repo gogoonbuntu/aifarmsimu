@@ -224,8 +224,8 @@ export class UIManager {
       },
       {
         name: '🥔 감자 초보용', tag: '쉬움', color: '#ec4899',
-        desc: '고냉지 + 산악갈색토 + 노지 + 감자 3000m²',
-        climate: 'highland', soil: 'mountain_brown', facility: 'open_field',
+        desc: '중부내륙 + 사양토 + 노지 + 감자 3000m² (3월 파종 적합)',
+        climate: 'central_inland', soil: 'sandy_loam', facility: 'open_field',
         crops: [{ id: 'potato', area: 3000 }],
       },
       {
