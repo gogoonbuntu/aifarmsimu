@@ -199,14 +199,17 @@ export class SimulationManager {
       }
     }
 
-    // 4. Auto-harvest check
+    // 4. Auto-harvest check — 수확적기 도달 후 7일 내 자동 수확
     const plots = this.cropEngine.getAlivePlots();
     for (const plot of plots) {
-      if (plot.currentStage === 'harvest_ready' && plot.daysSincePlanting > 20) {
-        const stages = plot.crop.phenology.stages;
-        const maxDays = stages.reduce((sum, s) => sum + s.duration.max, 0);
-        if (plot.daysSincePlanting > maxDays + 14) {
-          // Auto harvest if farmer hasn't gotten to it
+      if (plot.currentStage === 'harvest_ready') {
+        // Track days in harvest_ready stage
+        if (!plot.harvestReadyDay) {
+          plot.harvestReadyDay = Math.floor(timeState.totalDays);
+        }
+        const daysReady = Math.floor(timeState.totalDays) - plot.harvestReadyDay;
+        if (daysReady >= 7) {
+          // Auto harvest after 7 days if farmer hasn't gotten to it
           this.cropEngine.harvestPlot(plot);
         }
       }

@@ -422,16 +422,16 @@ export class CropGrowthEngine {
 
   updateHealth(plot, weather, windSpeed) {
     const stress = plot.currentStress.overall;
-    // Gradual health loss from sustained stress (reduced rates)
-    if (stress < 0.3) plot.health -= (0.3 - stress) * 3;
-    if (stress < 0.1) plot.health -= 1;
+    if (stress < 0.3) plot.health -= (0.3 - stress) * 5;
+    if (stress < 0.1) plot.health -= 3;
 
     // Wind damage
     if (windSpeed > 15) {
-      const windDmg = (windSpeed - 15) * plot.crop.sensitivity.wind * 1.5;
+      const windDmg = (windSpeed - 15) * plot.crop.sensitivity.wind * 2;
       plot.health -= windDmg;
       if (windSpeed > 30) {
-        plot.health -= (windSpeed - 30) * 0.3;
+        // Lodging (도복) - stems break
+        plot.health -= (windSpeed - 30) * 0.5;
         if (windSpeed > 40 && plot.currentStage !== 'germination' && plot.currentStage !== 'seedling') {
           eventBus.emit('event_log', {
             type: 'danger',
@@ -444,17 +444,18 @@ export class CropGrowthEngine {
     // Temperature extremes
     const temp = weather.temperature;
     if (temp <= plot.crop.requirements.temperature.lethal.cold) {
-      plot.health -= 10 * plot.crop.sensitivity.cold;
+      plot.health -= 15 * plot.crop.sensitivity.cold;
     }
     if (temp >= plot.crop.requirements.temperature.lethal.heat) {
-      plot.health -= 8 * plot.crop.sensitivity.heat;
+      plot.health -= 10 * plot.crop.sensitivity.heat;
     }
 
     // ---- Frost damage (서리 피해) ----
     if (weather.frostIntensity > 0) {
-      let frostDamage = weather.frostIntensity * plot.crop.sensitivity.cold * 5;
+      let frostDamage = weather.frostIntensity * plot.crop.sensitivity.cold * 8;
+      // Flowering/fruiting stage is extremely vulnerable to frost
       if (plot.currentStage === 'flowering' || plot.currentStage === 'fruiting') {
-        frostDamage *= 2.5;
+        frostDamage *= 3.0; // 꽃/열매 동해
         if (weather.frostIntensity > 0.5) {
           eventBus.emit('event_log', {
             type: 'danger',
@@ -462,8 +463,9 @@ export class CropGrowthEngine {
           });
         }
       }
+      // Seedlings very vulnerable
       if (plot.currentStage === 'seedling' || plot.currentStage === 'germination') {
-        frostDamage *= 1.5;
+        frostDamage *= 2.0;
       }
       plot.health -= frostDamage;
     }
@@ -548,9 +550,8 @@ export class CropGrowthEngine {
       ? plot.activeDiseases.reduce((sum, d) => sum + d.severity, 0) / plot.activeDiseases.length
       : Math.max(0, plot.diseaseRisk - 0.01);
 
-    // Natural recovery when conditions are favorable
-    if (stress > 0.8) plot.health = Math.min(100, plot.health + 1.5);
-    else if (stress > 0.5) plot.health = Math.min(100, plot.health + 0.5);
+    // Natural recovery
+    if (stress > 0.8) plot.health = Math.min(100, plot.health + 0.5);
 
     plot.health = clamp(plot.health, 0, 100);
   }
