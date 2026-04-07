@@ -167,6 +167,13 @@ class App {
       }
     });
 
+    // Provide plots to farmer when requested
+    eventBus.on('get_plots', (callback) => {
+      if (this.simulation?.cropEngine) {
+        callback(this.simulation.cropEngine.getPlots());
+      }
+    });
+
     // Manual harvest from detail panel
     document.addEventListener('harvest-plot', (e) => {
       const plotId = e.detail;

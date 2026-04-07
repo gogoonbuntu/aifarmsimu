@@ -390,55 +390,73 @@ export class World3D {
     const group = new THREE.Group();
 
     if (facilityData.type === 'greenhouse') {
-      const width = 10;
-      const length = 14;
-      const height = 4;
-
-      const frameMat = new THREE.MeshStandardMaterial({ color: 0x888888, metalness: 0.6 });
-      const frameGeo = new THREE.BoxGeometry(width, 0.1, length);
-      const frame = new THREE.Mesh(frameGeo, frameMat);
-      frame.position.y = height;
-      group.add(frame);
-
-      const roofGeo = new THREE.CylinderGeometry(width / 2, width / 2, length, 16, 1, true, 0, Math.PI);
+      // Size large enough to cover all crop plots (crops span ±12 from origin)
+      const width = 28;
+      const length = 28;
+      const height = 6;
       const isGlass = facilityData.id === 'glass_venlo';
-      const roofMat = new THREE.MeshPhysicalMaterial({
+
+      const frameMat = new THREE.MeshStandardMaterial({ color: 0x999999, metalness: 0.7, roughness: 0.3 });
+      const coverMat = new THREE.MeshPhysicalMaterial({
         color: isGlass ? 0xaaddff : 0xeeeefa,
         transparent: true,
-        opacity: isGlass ? 0.3 : 0.5,
-        roughness: isGlass ? 0.1 : 0.6,
-        transmission: isGlass ? 0.6 : 0.3,
+        opacity: isGlass ? 0.25 : 0.4,
+        roughness: isGlass ? 0.05 : 0.5,
+        transmission: isGlass ? 0.7 : 0.3,
         side: THREE.DoubleSide,
       });
-      const roof = new THREE.Mesh(roofGeo, roofMat);
+
+      // Arched roof (half cylinder)
+      const roofGeo = new THREE.CylinderGeometry(width / 2, width / 2, length, 32, 1, true, 0, Math.PI);
+      const roof = new THREE.Mesh(roofGeo, coverMat);
       roof.rotation.z = Math.PI / 2;
       roof.rotation.y = Math.PI / 2;
-      roof.position.y = height - 0.5;
+      roof.position.y = height - 1;
       group.add(roof);
 
-      const wallGeo = new THREE.PlaneGeometry(length, height);
-      const wallMat = roofMat.clone();
-      wallMat.opacity = 0.25;
+      // Side walls (left & right)
+      const sideWallGeo = new THREE.PlaneGeometry(length, height);
+      const sideWallMat = coverMat.clone();
+      sideWallMat.opacity = isGlass ? 0.2 : 0.3;
 
-      const wall1 = new THREE.Mesh(wallGeo, wallMat);
-      wall1.position.set(-width / 2, height / 2, 0);
-      wall1.rotation.y = Math.PI / 2;
-      group.add(wall1);
+      const wallL = new THREE.Mesh(sideWallGeo, sideWallMat);
+      wallL.position.set(-width / 2, height / 2, 0);
+      wallL.rotation.y = Math.PI / 2;
+      group.add(wallL);
 
-      const wall2 = new THREE.Mesh(wallGeo, wallMat);
-      wall2.position.set(width / 2, height / 2, 0);
-      wall2.rotation.y = -Math.PI / 2;
-      group.add(wall2);
+      const wallR = new THREE.Mesh(sideWallGeo, sideWallMat);
+      wallR.position.set(width / 2, height / 2, 0);
+      wallR.rotation.y = -Math.PI / 2;
+      group.add(wallR);
 
-      for (let i = -2; i <= 2; i++) {
-        const strutGeo = new THREE.CylinderGeometry(0.05, 0.05, height, 4);
-        const strut = new THREE.Mesh(strutGeo, frameMat);
-        strut.position.set(-width / 2, height / 2, i * (length / 4));
-        group.add(strut);
-        const strut2 = strut.clone();
-        strut2.position.x = width / 2;
-        group.add(strut2);
+      // Front & back walls (end gables)
+      const endWallGeo = new THREE.PlaneGeometry(width, height);
+      const wallF = new THREE.Mesh(endWallGeo, sideWallMat);
+      wallF.position.set(0, height / 2, length / 2);
+      group.add(wallF);
+      const wallB = new THREE.Mesh(endWallGeo, sideWallMat);
+      wallB.position.set(0, height / 2, -length / 2);
+      group.add(wallB);
+
+      // Vertical support struts
+      const strutCount = 6;
+      for (let i = 0; i <= strutCount; i++) {
+        const zPos = -length / 2 + i * (length / strutCount);
+        const strutGeo = new THREE.CylinderGeometry(0.06, 0.06, height, 4);
+        const strutL = new THREE.Mesh(strutGeo, frameMat);
+        strutL.position.set(-width / 2, height / 2, zPos);
+        group.add(strutL);
+        const strutR = strutL.clone();
+        strutR.position.x = width / 2;
+        group.add(strutR);
       }
+
+      // Top ridge beam
+      const ridgeGeo = new THREE.CylinderGeometry(0.08, 0.08, length, 6);
+      const ridge = new THREE.Mesh(ridgeGeo, frameMat);
+      ridge.rotation.x = Math.PI / 2;
+      ridge.position.y = height + width / 2 - 1.2;
+      group.add(ridge);
     }
 
     group.position.y = 0;

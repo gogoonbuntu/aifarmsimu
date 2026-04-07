@@ -804,12 +804,68 @@ export class UIManager {
 
       ${this.renderFacilityWarnings(crops, facility)}
 
+      <div style="margin:16px 0;">
+        <button id="success-tips-toggle" style="width:100%;padding:12px 16px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:12px;color:var(--accent-green);font-size:14px;font-weight:700;cursor:pointer;text-align:left;transition:all 0.2s;">
+          📗 성공 공식 보기 ▼
+        </button>
+        <div id="success-tips-content" class="hidden" style="margin-top:8px;padding:16px;background:rgba(255,255,255,0.02);border-radius:12px;border:1px solid rgba(255,255,255,0.06);font-size:12px;line-height:1.8;color:var(--text-secondary);">
+          <div style="font-size:14px;font-weight:700;color:var(--accent-green);margin-bottom:10px;">🏆 S등급 달성 공식</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div style="padding:10px;background:rgba(255,255,255,0.02);border-radius:8px;">
+              <strong style="color:var(--accent-blue);">💧 수분 관리</strong><br>
+              • 토양 수분이 <strong>40% 이하</strong>면 즉시 관수<br>
+              • 장마철에는 <strong>관수 중지</strong> (과습 주의)<br>
+              • 시설 재배 시 자동관수 로봇 추천
+            </div>
+            <div style="padding:10px;background:rgba(255,255,255,0.02);border-radius:8px;">
+              <strong style="color:var(--accent-amber);">🌿 비료 관리</strong><br>
+              • N(질소) <strong>40 이하</strong>면 투여<br>
+              • 작물별 NPK 비율이 자동 적용됨<br>
+              • 과다시비 주의 (N 200 상한)
+            </div>
+            <div style="padding:10px;background:rgba(255,255,255,0.02);border-radius:8px;">
+              <strong style="color:#ef4444;">🌪️ 재해 대응</strong><br>
+              • 시설 재배 = 태풍·우박 피해 <strong>50~80% 감소</strong><br>
+              • 폭염 시 관수량 증가 필요<br>
+              • 서리: 노지 재배 시 동해 위험
+            </div>
+            <div style="padding:10px;background:rgba(255,255,255,0.02);border-radius:8px;">
+              <strong style="color:var(--accent-green);">🌾 수확 타이밍</strong><br>
+              • <strong>harvest_ready</strong> 단계가 되면 즉시 수확<br>
+              • 수확 지연 시 품질 저하<br>
+              • 농부가 자동으로 수확하지만 수동도 가능
+            </div>
+          </div>
+          <div style="margin-top:12px;padding:10px;background:rgba(16,185,129,0.06);border-radius:8px;border:1px solid rgba(16,185,129,0.15);">
+            <strong style="color:var(--accent-green);">💡 핵심 요약:</strong> 
+            적절한 시기에 심고 (${climate?.name.ko}의 무상기간 ${climate?.frostFreeDays || '?'}일 기준), 
+            물-비료를 꾸준히 관리하면서, 
+            극한기상 이벤트를 시설로 방어하고, 
+            수확 적기를 놓치지 마세요!
+          </div>
+        </div>
+      </div>
+
       <div class="confirm-ready">
         <div class="ready-icon">🌾</div>
         <div class="ready-text">준비 완료! 시뮬레이션을 시작하면 시간이 흐르면서 작물이 성장합니다.</div>
         <div class="ready-sub">시간 배속을 조절하여 빠르게 결과를 확인할 수 있습니다.</div>
       </div>
     `;
+
+    // Toggle success tips
+    document.getElementById('success-tips-toggle')?.addEventListener('click', () => {
+      const content = document.getElementById('success-tips-content');
+      const btn = document.getElementById('success-tips-toggle');
+      if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        btn.textContent = '📗 성공 공식 접기 ▲';
+        content.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } else {
+        content.classList.add('hidden');
+        btn.textContent = '📗 성공 공식 보기 ▼';
+      }
+    });
   }
 
   renderFacilityWarnings(crops, facility) {
