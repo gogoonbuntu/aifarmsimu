@@ -26,13 +26,13 @@ export class CropGrowthEngine {
       isAlive: true,
       isHarvested: false,
 
-      // Biomass model
-      totalBiomass: 0,          // g/m²
-      leafBiomass: 0,
-      stemBiomass: 0,
+      // Biomass model — 종자/모종이 가진 초기 에너지로 자엽(cotyledon) 생성
+      totalBiomass: 5,            // g/m² (seed reserves → initial shoots)
+      leafBiomass: 3,             // g/m² (cotyledon leaves)
+      stemBiomass: 1,             // g/m²
       fruitBiomass: 0,
-      rootBiomass: 0,
-      LAI: 0,                   // Leaf Area Index
+      rootBiomass: 1,             // g/m² (radicle)
+      LAI: 0.1,                   // Leaf Area Index (cotyledon stage)
       maxLAI: 0,
 
       // Stress tracking
