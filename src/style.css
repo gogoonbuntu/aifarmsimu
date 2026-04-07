@@ -1075,3 +1075,84 @@ body {
   font-weight: 700;
   color: var(--text-primary);
 }
+
+/* ===== Auth Bar ===== */
+.auth-bar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+.auth-login-area {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.auth-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  background: rgba(255,255,255,0.05);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.auth-btn:hover { background: rgba(255,255,255,0.1); transform: translateY(-1px); }
+.google-btn { border-color: rgba(66,133,244,0.3); }
+.google-btn:hover { border-color: rgba(66,133,244,0.6); box-shadow: 0 2px 12px rgba(66,133,244,0.2); }
+.guest-btn { color: var(--text-muted); }
+.auth-user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.auth-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid var(--accent-green);
+}
+.auth-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.auth-btn-sm {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.auth-btn-sm:hover { background: rgba(255,255,255,0.08); }
+
+/* ===== Game History Modal ===== */
+.history-container {
+  background: linear-gradient(145deg, rgba(15,23,42,0.97), rgba(30,41,59,0.95));
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px;
+  padding: 28px 32px;
+  max-width: 560px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+  margin: auto;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.history-header h2 { font-size: 18px; color: var(--text-primary); }

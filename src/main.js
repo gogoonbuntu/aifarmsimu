@@ -5,6 +5,8 @@ import { SimulationManager } from './engine/SimulationManager.js';
 import { World3D } from './world/World3D.js';
 import { Farmer3D } from './world/Farmer3D.js';
 import { UIManager } from './ui/UIManager.js';
+import { authService } from './firebase/auth.js';
+import { dbService } from './firebase/db.js';
 
 class App {
   constructor() {
@@ -182,10 +184,18 @@ class App {
       }
     });
 
-    // Game over
-    eventBus.on('game_over', (stats) => {
+    // Game over — save to Firebase
+    eventBus.on('game_over', async (stats) => {
       this.isRunning = false;
       this.ui.showEndingScreen(stats);
+
+      // Save game result to Firestore
+      if (authService.isLoggedIn()) {
+        const resultId = await dbService.saveGameResult(stats);
+        if (resultId) {
+          eventBus.emit('event_log', { type: 'info', message: '☁️ 게임 결과가 클라우드에 저장되었습니다.' });
+        }
+      }
     });
 
     // Restart

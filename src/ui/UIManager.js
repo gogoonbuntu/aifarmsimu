@@ -7,6 +7,8 @@ import { climateRegistry } from '../data/climate/index.js';
 import { cropRegistry } from '../data/crops/index.js';
 import { robotRegistry } from '../data/robots/index.js';
 import { facilityRegistry } from '../data/facilities/index.js';
+import { authService } from '../firebase/auth.js';
+import { dbService } from '../firebase/db.js';
 
 const MONTH_KO = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
 const DRAIN_KO = { very_good:'매우양호', good:'양호', moderate:'보통', poor:'불량', very_poor:'매우불량' };
@@ -30,6 +32,136 @@ export class UIManager {
     };
     this.setupWizard();
     this.setupEventListeners();
+    this.setupAuth();
+  }
+
+  // ===== AUTH UI =====
+  setupAuth() {
+    const googleBtn = document.getElementById('auth-google-btn');
+    const guestBtn = document.getElementById('auth-guest-btn');
+    const logoutBtn = document.getElementById('auth-logout-btn');
+    const historyBtn = document.getElementById('auth-history-btn');
+    const historyClose = document.getElementById('history-close');
+
+    googleBtn?.addEventListener('click', async () => {
+      try {
+        googleBtn.disabled = true;
+        googleBtn.textContent = '로그인 중...';
+        await authService.signInWithGoogle();
+      } catch (e) {
+        googleBtn.textContent = 'Google로 로그인';
+      } finally {
+        googleBtn.disabled = false;
+      }
+    });
+
+    guestBtn?.addEventListener('click', async () => {
+      try {
+        await authService.signInAsGuest();
+      } catch (e) { /* handled */ }
+    });
+
+    logoutBtn?.addEventListener('click', async () => {
+      await authService.logout();
+    });
+
+    historyBtn?.addEventListener('click', () => this.showGameHistory());
+    historyClose?.addEventListener('click', () => {
+      document.getElementById('history-modal')?.classList.add('hidden');
+    });
+
+    // Listen for auth changes
+    eventBus.on('auth_changed', (user) => this.updateAuthUI(user));
+
+    // Check initial state
+    authService.ready.then(user => this.updateAuthUI(user));
+  }
+
+  updateAuthUI(user) {
+    const loginArea = document.getElementById('auth-login-area');
+    const userInfo = document.getElementById('auth-user-info');
+    const avatar = document.getElementById('auth-avatar');
+    const name = document.getElementById('auth-name');
+
+    if (user) {
+      loginArea?.classList.add('hidden');
+      userInfo?.classList.remove('hidden');
+      if (user.photoURL) {
+        avatar.src = user.photoURL;
+        avatar.style.display = 'block';
+      } else {
+        avatar.style.display = 'none';
+      }
+      name.textContent = user.displayName || (user.isAnonymous ? '게스트 농부' : user.email || '농부');
+    } else {
+      loginArea?.classList.remove('hidden');
+      userInfo?.classList.add('hidden');
+    }
+  }
+
+  async showGameHistory() {
+    const modal = document.getElementById('history-modal');
+    const content = document.getElementById('history-content');
+    modal?.classList.remove('hidden');
+    content.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">로딩 중...</div>';
+
+    try {
+      const [profile, games, leaderboard] = await Promise.all([
+        dbService.getUserProfile(),
+        dbService.getUserGames(10),
+        dbService.getLeaderboard(10),
+      ]);
+
+      const gradeColors = { S: '#f59e0b', A: '#10b981', B: '#3b82f6', C: '#94a3b8', D: '#ef4444' };
+
+      // Profile summary
+      const profileHTML = profile ? `
+        <div style="display:flex;gap:16px;align-items:center;padding:16px;background:rgba(255,255,255,0.03);border-radius:12px;margin-bottom:20px;">
+          <div style="font-size:40px;">🧑‍🌾</div>
+          <div style="flex:1;">
+            <div style="font-size:16px;font-weight:700;color:var(--text-primary);">${profile.displayName || '농부'}</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">
+              총 ${profile.totalGames || 0}회 플레이 · 최고 등급 <span style="color:${gradeColors[profile.bestGrade] || '#fff'};font-weight:700;">${profile.bestGrade || '-'}</span> · 수확 ${profile.totalHarvests || 0}회
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:11px;color:var(--text-muted);">누적 수익</div>
+            <div style="font-size:16px;font-weight:700;color:${(profile.totalProfit||0) >= 0 ? 'var(--accent-green)' : '#ef4444'};">₩${Math.round(profile.totalProfit||0).toLocaleString()}</div>
+          </div>
+        </div>` : '';
+
+      // Game history
+      const gamesHTML = games.length > 0 ? `
+        <h3 style="font-size:14px;margin-bottom:10px;color:var(--accent-green);">📋 최근 게임 기록</h3>
+        ${games.map(g => `
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(255,255,255,0.02);border-radius:8px;margin-bottom:6px;border:1px solid rgba(255,255,255,0.05);">
+            <span style="font-size:20px;font-weight:800;color:${gradeColors[g.grade] || '#fff'};min-width:28px;text-align:center;">${g.grade}</span>
+            <div style="flex:1;font-size:12px;">
+              <div style="color:var(--text-primary);font-weight:600;">${g.climateName} · ${g.facilityName}</div>
+              <div style="color:var(--text-muted);">${g.totalDays}일 · 수확 ${g.harvestCount}건 · 고사 ${g.deadCrops}건</div>
+            </div>
+            <span style="font-size:13px;font-weight:700;color:${(g.profit||0) >= 0 ? 'var(--accent-green)' : '#ef4444'};">₩${Math.round(g.profit||0).toLocaleString()}</span>
+          </div>
+        `).join('')}` : '<div style="color:var(--text-muted);font-size:13px;">아직 게임 기록이 없습니다.</div>';
+
+      // Leaderboard
+      const lbHTML = leaderboard.length > 0 ? `
+        <h3 style="font-size:14px;margin:20px 0 10px;color:var(--accent-amber);">🏆 리더보드 (수익 TOP 10)</h3>
+        ${leaderboard.map((l, i) => `
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(255,255,255,0.02);border-radius:8px;margin-bottom:4px;border:1px solid rgba(255,255,255,0.05);">
+            <span style="font-size:14px;font-weight:800;min-width:24px;color:${i < 3 ? '#f59e0b' : 'var(--text-muted)'};">${i + 1}</span>
+            <div style="flex:1;font-size:12px;">
+              <span style="color:var(--text-primary);">${l.displayName || '익명'}</span>
+              <span style="color:var(--text-muted);margin-left:8px;">${l.climateName || ''}</span>
+            </div>
+            <span style="font-size:12px;font-weight:700;color:var(--accent-green);">₩${Math.round(l.profit||0).toLocaleString()}</span>
+          </div>
+        `).join('')}` : '';
+
+      content.innerHTML = profileHTML + gamesHTML + lbHTML;
+    } catch (e) {
+      content.innerHTML = '<div style="text-align:center;padding:40px;color:#ef4444;">기록을 불러올 수 없습니다.</div>';
+    }
   }
 
   // ===== SETUP WIZARD =====
@@ -170,6 +302,7 @@ export class UIManager {
         card.classList.add('selected');
         this.config.climate = climateRegistry.get(card.dataset.id);
         this.showClimateDetail(this.config.climate);
+        setTimeout(() => document.getElementById('climate-detail')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
       });
     });
 
@@ -264,6 +397,7 @@ export class UIManager {
         card.classList.add('selected');
         this.config.soil = soilRegistry.get(card.dataset.id);
         this.showSoilDetail(this.config.soil);
+        setTimeout(() => document.getElementById('soil-detail')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
       });
     });
 
