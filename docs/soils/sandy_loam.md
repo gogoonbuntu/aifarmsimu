@@ -1,7 +1,6 @@
 # 🏖️ 사양토 (Sandy Loam) — Inceptisol
 
-![사양토](https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=640&q=80)
-*사양토 농경지*
+![sandy_loam](../images/sandy_loam.png)
 
 ## USDA: Inceptisol
 모래 함량 높아 배수 매우 양호. pH 5.0~6.0 · 유기물 2.0% · CEC 11  
@@ -14,5 +13,3 @@
 
 ## 분포: 낙동강 유역, 해안가, 경기 북부, 여주
 
-![모래 토양](https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=640&q=80)
-*사양토 단면*

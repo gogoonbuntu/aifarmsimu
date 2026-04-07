@@ -1,7 +1,6 @@
 # 🍇 포도 (Grape, *Vitis vinifera* L.)
 
-![포도](https://images.unsplash.com/photo-1596363505729-4190a9506133?w=640&q=80)
-*포도 착색성숙기*
+![grape](../images/grape.png)
 
 ## 분류
 - **과**: 포도과 (Vitaceae) · **카테고리**: 과수 (다년생, C₃)
@@ -52,9 +51,6 @@
 |------|------|---------|
 | 잿빛곰팡이병 | 15~25°C, RH≥85% | 5% |
 | 흰가루병 | 20~30°C, RH≥60% | 3% |
-
-![포도 수확](https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=640&q=80)
-*포도 수확*
 
 ## 참고 문헌
 1. Kliewer, W.M. (1977). Berry composition. *Am. J. Enol. Vitic.*

@@ -1,7 +1,6 @@
 # 🥔 감자 (Potato, *Solanum tuberosum* L.)
 
-![감자밭](https://images.unsplash.com/photo-1518977676601-b53f82ber4dc?w=640&q=80)
-*감자 경엽생장기*
+![potato](../images/potato.png)
 
 ## 분류
 - **과**: 가지과 (Solanaceae) · **카테고리**: 근채류 (C₃)
@@ -61,9 +60,6 @@
 | 더뎅이병 (*S. scabies*) | 18~28°C, RH 40~65% | 3% |
 
 > **역사**: 1845년 아일랜드 대기근의 원인이 감자역병. 현재도 전 세계 최대 감자 병해.
-
-![감자 수확](https://images.unsplash.com/photo-1508313880080-c4bef0730395?w=640&q=80)
-*감자 괴경 수확*
 
 ## 재배력
 | 구역 | 파종 | 수확 | 비고 |

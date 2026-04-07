@@ -1,7 +1,6 @@
 # 🌊 남부해안 (South Coastal) — Cfa
 
-![남부해안](https://images.unsplash.com/photo-1573790387438-4da905039392?w=640&q=80)
-*남부 해안 풍경*
+![central_coastal](../images/central_coastal.png)
 
 ## 기후 개요
 연평균 14.5°C · 강수 1,400mm · 무상일수 220일  
@@ -18,9 +17,6 @@
 - 겨울 온화 (1월 최저 -1.5°C), 서리 최소
 - 태풍 직접 영향 연 2회, 8~9월 집중
 - 높은 습도 → 병해 발생 위험
-
-![해안 농업](https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=640&q=80)
-*남부해안 농업지대*
 
 ## 추천 작물
 벼(4월), 고구마(4~5월), 배추(해남)

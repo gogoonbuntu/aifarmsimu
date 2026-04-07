@@ -1,7 +1,6 @@
 # 🌶️ 고추 (Red Pepper, *Capsicum annuum* L.)
 
-![고추](https://images.unsplash.com/photo-1583119022894-919a68a3d0e3?w=640&q=80)
-*고추 착과*
+![red_pepper](../images/red_pepper.png)
 
 ## 🏆 지역별 유명 산지
 | 지역 | 특징 |
@@ -29,9 +28,6 @@
 | **역병** (*P. capsici*) | 20~30°C, RH≥90% | **7%** |
 
 > 역병은 장마철 집중 발생, 포장 전체 폐사 가능. 배수 관리가 핵심.
-
-![건고추 건조](https://images.unsplash.com/photo-1588252303782-cb80119abd6d?w=640&q=80)
-*건고추 건조*
 
 ## 참고
 1. 농촌진흥청 (2024). 고추 재배매뉴얼.

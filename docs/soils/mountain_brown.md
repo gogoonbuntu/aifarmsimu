@@ -1,7 +1,6 @@
 # 🏔️ 산악갈색토 (Mountain Brown) — Inceptisol
 
-![산악갈색토](https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=640&q=80)
-*강원도 산간 풍경*
+![mountain_brown](../images/mountain_brown.png)
 
 ## USDA: Inceptisol (Udepts)
 산지 미숙 토양. 유효토심 **50cm** (얕음).  
@@ -14,5 +13,3 @@ pH 4.5~5.5 · 유기물 4.5% · CEC 12 · 포장용수량 0.28
 
 ## 분포: **강원도 산간** — 대관령, 평창, 태백 (해발 600m+)
 
-![고냉지밭](https://images.unsplash.com/photo-1584515933487-779824d29309?w=640&q=80)
-*고냉지 채소밭*

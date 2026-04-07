@@ -1,7 +1,6 @@
 # 🪨 충적양토 (Alluvial Loam) — Entisol
 
-![충적양토](https://images.unsplash.com/photo-1560493676-04071c5f467b?w=640&q=80)
-*충적 평야 농경지*
+![loam_alluvial](../images/loam_alluvial.png)
 
 ## USDA: Entisol (Fluvents)
 하천 퇴적작용으로 형성. 한국 농경지 약 30%.
@@ -23,5 +22,3 @@
 
 > **범용 최적 토양**: 양분·배수·보수력 균형. 대부분 작물 재배 가능.
 
-![평야](https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=640&q=80)
-*충적평야 농경지*

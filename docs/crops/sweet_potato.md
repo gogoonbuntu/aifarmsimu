@@ -1,7 +1,6 @@
 # 🍠 고구마 (Sweet Potato, *Ipomoea batatas*)
 
-![고구마](https://images.unsplash.com/photo-1596097635121-14b38c5e7b42?w=640&q=80)
-*고구마 괴근*
+![sweet_potato](../images/sweet_potato.png)
 
 ## 🏆 지역별 유명 산지
 | 지역 | 특징 |
@@ -19,9 +18,6 @@
 ## 생육: 기본온도 **15°C** (고온 작물) · GDD 3,200 · 최적 28/22°C
 - 치사 저온 **5°C** (극도 한랭 감수성) · 가뭄 내성 0.6 (강함)
 - **NPK**: 3:5:12 (K 매우 높음 — 괴근 비대)
-
-![고구마밭](https://images.unsplash.com/photo-1590868309235-ea34bed7bd7f?w=640&q=80)
-*고구마 수확*
 
 ## 참고
 1. 농촌진흥청 (2024). 고구마 재배매뉴얼.

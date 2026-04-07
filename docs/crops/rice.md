@@ -1,7 +1,6 @@
 # 🌾 벼 (Rice, *Oryza sativa* L.)
 
-![벼 논](https://images.unsplash.com/photo-1536054953991-5765e1e39213?w=640&q=80)
-*논 담수 재배 풍경*
+![rice](../images/rice.png)
 
 ## 분류
 - **과**: 벼과 (Poaceae) · **속**: 벼속 (*Oryza*) · **카테고리**: 곡류 (C₃)
@@ -76,9 +75,6 @@
 |------|--------|---------|-----------|
 | 도열병 (*M. oryzae*) | 20~28°C, RH≥85% | 4% | 분얼·출수기 |
 | 문고병 (*R. solani*) | 25~32°C, RH≥80% | 3% | 분얼~등숙기 |
-
-![벼 수확](https://images.unsplash.com/photo-1599138849233-d6bfbce8a495?w=640&q=80)
-*벼 수확 풍경*
 
 ---
 

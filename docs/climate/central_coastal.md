@@ -1,7 +1,6 @@
 # 🌊 중부해안 (Central Coastal) — Cwa
 
-![해안](https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=640&q=80)
-*해안 풍경*
+![central_coastal](../images/central_coastal.png)
 
 ## 기후 개요
 연평균 12.8°C · 강수 1,150mm · 무상일수 195일  
@@ -17,9 +16,6 @@
 ## 특성
 - 해양성 영향으로 일교차 작음, 겨울 온화
 - 서해안: 해무 빈번 · 동해안: 겨울 적설량 많음
-
-![해안농업](https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=640&q=80)
-*해안 인근 농경지*
 
 ## 추천 작물
 대파(3~4월), 배추(8월), 딸기(시설, 9월 정식)

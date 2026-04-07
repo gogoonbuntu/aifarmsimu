@@ -1,7 +1,6 @@
 # 🧅 대파 (Green Onion, *Allium fistulosum* L.)
 
-![대파](https://images.unsplash.com/photo-1590165482129-1b8b27698780?w=640&q=80)
-*대파 수확*
+![green_onion](../images/green_onion.png)
 
 ## 🏆 지역별 유명 산지
 | 지역 | 특징 |
@@ -18,9 +17,6 @@
 
 ## 생육: 기본온도 4°C · GDD 2,100 · 최적 18/12°C · 내한성 강(-5°C)
 - **NPK**: 12:4:6 (N 중심) · 수량 4,000 kg/10a · RUE 1.8
-
-![대파밭](https://images.unsplash.com/photo-1518977956812-cd3dbadaaf31?w=640&q=80)
-*대파 밭*
 
 ## 참고
 1. 농촌진흥청 (2024). 대파 재배매뉴얼.

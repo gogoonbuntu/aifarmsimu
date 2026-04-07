@@ -1,7 +1,6 @@
 # 🍅 토마토 (Tomato, *Solanum lycopersicum* L.)
 
-![토마토](https://images.unsplash.com/photo-1592841200221-a6898f307baa?w=640&q=80)
-*토마토 수확기*
+![tomato](../images/tomato.png)
 
 ## 🏆 지역별 유명 산지
 | 지역 | 특징 |
@@ -18,9 +17,6 @@
 
 ## 생육: 기본온도 10°C · GDD 1,500 · 최적 25/18°C · **시설 필수**
 - 치사 저온 **2°C** · **NPK**: 8:4:8 · 수량 10,000 kg/10a · RUE 2.5
-
-![토마토 하우스](https://images.unsplash.com/photo-1530062845289-9109b2c9c868?w=640&q=80)
-*토마토 시설재배*
 
 ## 참고
 1. Heuvelink, E. (2005). *Tomatoes*. CABI.

@@ -1,7 +1,6 @@
 # 🧱 식양토 (Clay Loam) — Alfisol
 
-![식양토](https://images.unsplash.com/photo-1585336261022-680e295ce3fe?w=640&q=80)
-*점토질 토양*
+![clay_loam](../images/clay_loam.png)
 
 ## USDA: Alfisol
 점토 함량 높아 양분·수분 보유력 우수.  
@@ -14,5 +13,3 @@ pH 5.5~7.0 · 유기물 3.2% · CEC **22** · 포장용수량 0.38 · 위조점 
 
 ## 분포: 호남평야, 충청 내륙, 경기 남부
 
-![점토밭](https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=640&q=80)
-*식양토 농경지*

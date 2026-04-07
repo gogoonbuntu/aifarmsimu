@@ -1,7 +1,6 @@
 # 🍓 딸기 (Strawberry, *Fragaria × ananassa*)
 
-![딸기](https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=640&q=80)
-*딸기 수확시기*
+![strawberry](../images/strawberry.png)
 
 ## 분류
 - **과**: 장미과 · **카테고리**: 과수 (시설 재배) · **품종**: 설향, 금실, 죽향, 비타베리
@@ -46,9 +45,6 @@
 - **단일성**: 일장 12h 이하에서 화아분화
 - **NPK**: 8:5:10 (K 높음)
 - 병해: 흰가루병(4%), 잿빛곰팡이병(5%)
-
-![딸기 시설재배](https://images.unsplash.com/photo-1543528176-61b239494933?w=640&q=80)
-*딸기 시설재배 하우스*
 
 ## 참고
 1. Hancock, J.F. (1999). *Strawberries*. CABI.

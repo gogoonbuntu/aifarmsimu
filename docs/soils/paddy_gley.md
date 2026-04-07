@@ -1,7 +1,6 @@
 # 🌾 논토양 (Paddy Gley) — Inceptisol (Aquepts)
 
-![논토양](https://images.unsplash.com/photo-1536054953991-5765e1e39213?w=640&q=80)
-*한국 논*
+![paddy_gley](../images/paddy_gley.png)
 
 ## USDA: Inceptisol (Aquepts)
 장기 담수로 형성된 환원층(글레이). **벼 전용 토양**.  
@@ -14,5 +13,3 @@ pH 5.0~6.5 · 유기물 **4.0%** · CEC 18 · 포장용수량 **0.42** · 배수
 
 ## 분포: **전국 논 지대** — 호남, 충남, 경기
 
-![논](https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?w=640&q=80)
-*논 담수 풍경*

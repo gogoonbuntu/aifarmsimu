@@ -1,7 +1,6 @@
 # 🥬 배추 (Napa Cabbage, *Brassica rapa* subsp. *pekinensis*)
 
-![배추](https://images.unsplash.com/photo-1594282486552-05b4d80fbb9f?w=640&q=80)
-*배추 결구기*
+![napa_cabbage](../images/napa_cabbage.png)
 
 ## 🏆 지역별 유명 산지
 | 지역 | 특징 |
@@ -24,9 +23,6 @@
 
 ## 생육: 기본온도 4°C · GDD 1,400 · 최적 18/10°C · 고온 약함(35°C 치사)
 - **NPK**: 16:4:10 · 평균 수량 8,000 kg/10a · RUE 2.0 · HI 0.75
-
-![배추밭](https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=640&q=80)
-*배추 노지 재배*
 
 ## 참고
 1. 농촌진흥청 (2024). 배추 재배매뉴얼.

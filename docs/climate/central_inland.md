@@ -1,7 +1,6 @@
 # 🌍 중부내륙 (Central Inland) — Dwa
 
-![중부내륙](https://images.unsplash.com/photo-1580399986068-f8e6e56d49e6?w=640&q=80)
-*경기도 농촌 풍경*
+![central_inland](../images/central_inland.png)
 
 ## 기후 개요
 | 항목 | 값 |
@@ -30,9 +29,6 @@
 
 ## 극한 기상
 서리(11~3월), 장마(6월 하~7월), 태풍(8~9월 연 0.5회), 폭염(7~8월)
-
-![겨울 농촌](https://images.unsplash.com/photo-1486591038957-ae9e4b0e39f8?w=640&q=80)
-*중부내륙 겨울*
 
 ## 추천 작물
 벼(4~5월), 고추(5월 정식), 배추(8월), 사과, 포도(3월)

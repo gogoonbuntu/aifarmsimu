@@ -1,7 +1,6 @@
 # 🍎 사과 (Apple, *Malus domestica* Borkh.)
 
-![사과](https://images.unsplash.com/photo-1568702846914-96b305d2ebb7?w=640&q=80)
-*사과 과수원*
+![apple](../images/apple.png)
 
 ## 분류
 - **과**: 장미과 · **카테고리**: 과수 (다년생) · **품종**: 후지(부사), 홍로, 감홍
@@ -53,9 +52,6 @@
 |------|------|---------|
 | 화상병 (*E. amylovora*) | 18~28°C, RH≥70% | 6% |
 | 검은별무늬병 | 10~25°C, RH≥80% | 4% |
-
-![사과 착색](https://images.unsplash.com/photo-1570913149827-d2ac84ab3f9a?w=640&q=80)
-*착색 완료된 사과*
 
 ## 참고
 1. Richardson et al. (1974). Chill unit model. *HortScience*.
