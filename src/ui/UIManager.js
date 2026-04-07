@@ -819,7 +819,7 @@ export class UIManager {
         <h3>✅ 최종 확인</h3>
         <p>선택한 내용을 확인하고 시뮬레이션을 시작하세요.</p>
       </div>
-      <div class="confirm-grid" style="grid-template-columns:repeat(5,1fr);">
+      <div class="confirm-grid">
         <div class="confirm-section">
           <div class="confirm-icon">🌍</div>
           <h4>기후 구역</h4>
@@ -839,19 +839,33 @@ export class UIManager {
           <div class="confirm-sub">${facilityCost > 0 ? formatCurrency(facilityCost) : '무료'}</div>
         </div>
         <div class="confirm-section">
-          <div class="confirm-icon">📅</div>
-          <h4>파종 시작</h4>
-          <select id="start-month-select" style="padding:6px 10px;border-radius:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:var(--text-primary);font-size:13px;font-weight:700;text-align:center;cursor:pointer;width:100%;">
-            ${[1,2,3,4,5,6,7,8,9,10,11,12].map(m => `<option value="${m}" ${m === (this.config.strategy.startMonth || 3) ? 'selected' : ''}>${m}월</option>`).join('')}
-          </select>
-          <div class="confirm-sub" id="start-month-temp" style="margin-top:4px;"></div>
-        </div>
-        <div class="confirm-section">
           <div class="confirm-icon">💰</div>
           <h4>잔여 자금</h4>
           <div class="confirm-value" style="color:${remaining > 0 ? 'var(--accent-green)' : 'var(--accent-red)'}">${formatCurrency(remaining)}</div>
           <div class="confirm-sub">총 투자: ${formatCurrency(totalCost)}</div>
         </div>
+      </div>
+
+      <div style="margin:16px 0;">
+        <h4 style="margin-bottom:8px;font-size:13px;">📅 파종 시작월 선택</h4>
+        <div id="month-bar" style="display:flex;gap:4px;overflow-x:auto;padding:4px 0;">
+          ${[1,2,3,4,5,6,7,8,9,10,11,12].map(m => {
+            const selected = m === (this.config.strategy.startMonth || 3);
+            const climateId = climate?.id || 'central_inland';
+            const isRecommended = crops.some(c => {
+              const cal = c.data.calendar?.[climateId] || Object.values(c.data.calendar || {})[0];
+              return cal?.sowingMonth?.includes(m) || cal?.transplantMonth?.includes(m);
+            });
+            const t = climate?.monthly?.avgTemp?.[m-1] ?? '?';
+            const tMin = climate?.monthly?.minTemp?.[m-1] ?? '?';
+            return `<button class="month-btn ${selected ? 'month-active' : ''} ${isRecommended ? 'month-rec' : ''}" data-month="${m}">
+              <div style="font-weight:700;font-size:13px;">${m}월</div>
+              <div style="font-size:9px;opacity:0.7;">${t}°C</div>
+              ${isRecommended ? '<div style="font-size:8px;color:#10b981;">추천</div>' : `<div style="font-size:8px;opacity:0.5;">${tMin}°C</div>`}
+            </button>`;
+          }).join('')}
+        </div>
+        <div id="start-month-info" style="font-size:11px;color:var(--text-muted);margin-top:6px;text-align:center;"></div>
       </div>
 
       <div class="confirm-crops">
@@ -967,21 +981,28 @@ export class UIManager {
       }
     });
 
-    // Start month selector
-    const monthSelect = document.getElementById('start-month-select');
-    const updateMonthInfo = () => {
-      const m = parseInt(monthSelect.value);
-      this.config.strategy.startMonth = m;
-      const tempEl = document.getElementById('start-month-temp');
+    // Start month bar
+    const monthBtns = document.querySelectorAll('#month-bar .month-btn');
+    const updateMonthInfo = (m) => {
+      const infoEl = document.getElementById('start-month-info');
       if (climate?.monthly?.avgTemp) {
         const t = climate.monthly.avgTemp[m - 1];
         const tMin = climate.monthly.minTemp[m - 1];
-        tempEl.innerHTML = `평균 ${t}°C / 최저 ${tMin}°C`;
-        tempEl.style.color = tMin < 0 ? '#ef4444' : tMin < 5 ? '#f59e0b' : 'var(--accent-green)';
+        const warning = tMin < 0 ? '⚠️ 서리 위험' : tMin < 5 ? '🌡️ 저온 주의' : '✅ 적합한 기온';
+        infoEl.innerHTML = `${m}월: 평균 ${t}°C / 최저 ${tMin}°C — ${warning}`;
+        infoEl.style.color = tMin < 0 ? '#ef4444' : tMin < 5 ? '#f59e0b' : 'var(--accent-green)';
       }
     };
-    monthSelect?.addEventListener('change', updateMonthInfo);
-    updateMonthInfo(); // Show initial value
+    monthBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const m = parseInt(btn.dataset.month);
+        this.config.strategy.startMonth = m;
+        monthBtns.forEach(b => b.classList.remove('month-active'));
+        btn.classList.add('month-active');
+        updateMonthInfo(m);
+      });
+    });
+    updateMonthInfo(this.config.strategy.startMonth || 3);
   }
 
   renderFacilityWarnings(crops, facility) {
@@ -1149,7 +1170,8 @@ export class UIManager {
       const chillReq = p.crop.phenology.chillHoursRequired;
       const vernInfo = chillReq && !p.vernalizationMet 
         ? `❄️ 저온 ${p.chillHours.toFixed(0)}/${chillReq}h` : '';
-      const stressPct = ((1 - p.currentStress.overall) * 100).toFixed(0);
+      const fitPct = (p.currentStress.overall * 100).toFixed(0);
+      const fitColor = p.currentStress.overall > 0.7 ? 'var(--accent-green)' : p.currentStress.overall > 0.4 ? '#f59e0b' : '#ef4444';
       return `
         <div class="crop-card" data-plot-id="${p.id}">
           <div class="crop-card-header">
@@ -1157,7 +1179,7 @@ export class UIManager {
             <span class="crop-card-stage">${stageKo}</span>
           </div>
           <div style="font-size:11px;color:var(--text-secondary);margin:4px 0;">
-            건강도 ${Math.round(p.health)}% · 스트레스 ${stressPct}%
+            건강도 ${Math.round(p.health)}% · <span style="color:${fitColor}">환경 적합도 ${fitPct}%</span>
           </div>
           <div class="health-bar">
             <div class="health-bar-fill" style="width:${p.health}%;background:${healthColor}"></div>
@@ -1239,11 +1261,11 @@ export class UIManager {
         <div class="stat-row"><span class="stat-label">바이오매스</span><span class="stat-value">${plot.totalBiomass.toFixed(1)} g/m²</span></div>
       </div>
       <div class="detail-section">
-        <h4>💪 스트레스 지수</h4>
-        ${this.renderMeter('온도', stress.temperature, stress.temperature > 0.7 ? 'green' : stress.temperature > 0.4 ? 'amber' : 'red')}
-        ${this.renderMeter('수분', stress.water, stress.water > 0.7 ? 'blue' : stress.water > 0.4 ? 'amber' : 'red')}
-        ${this.renderMeter('영양', stress.nutrient, stress.nutrient > 0.7 ? 'green' : stress.nutrient > 0.4 ? 'amber' : 'red')}
-        ${this.renderMeter('광합성', stress.light, stress.light > 0.7 ? 'green' : 'amber')}
+        <h4>🌡️ 환경 적합도 <span style="font-size:10px;color:var(--text-muted);font-weight:400;">(높을수록 좋음)</span></h4>
+        ${this.renderMeter('온도 충족', stress.temperature, stress.temperature > 0.7 ? 'green' : stress.temperature > 0.4 ? 'amber' : 'red')}
+        ${this.renderMeter('수분 충족', stress.water, stress.water > 0.7 ? 'blue' : stress.water > 0.4 ? 'amber' : 'red')}
+        ${this.renderMeter('영양 충족', stress.nutrient, stress.nutrient > 0.7 ? 'green' : stress.nutrient > 0.4 ? 'amber' : 'red')}
+        ${this.renderMeter('광합성 효율', stress.light, stress.light > 0.7 ? 'green' : 'amber')}
         ${this.renderStressGuide(stress, plot)}
       </div>
       <div class="detail-section">
@@ -1427,7 +1449,7 @@ export class UIManager {
     const cropReportHTML = plots.map(p => {
       const stressArr = p.stressHistory || [];
       const avgStress = stressArr.length > 0 ? (stressArr.reduce((a, b) => a + b, 0) / stressArr.length) : 1;
-      const stressLabel = avgStress > 0.8 ? '양호 🟢' : avgStress > 0.5 ? '주의 🟡' : '위험 🔴';
+      const stressLabel = avgStress > 0.8 ? '최적 🟢' : avgStress > 0.5 ? '보통 🟡' : '부적합 🔴';
       const nRatio = p.fertilizerRatio || {};
       const diseasesHTML = (p.activeDiseases && p.activeDiseases.length > 0)
         ? p.activeDiseases.map(d => `<span style="color:#ef4444;">🦠 ${d.name} (${(d.severity*100).toFixed(0)}%)</span>`).join(', ')
@@ -1446,7 +1468,7 @@ export class UIManager {
             <div class="rp-m"><span>건강도</span><span>${p.health?.toFixed(0) || 0}%</span></div>
             <div class="rp-m"><span>적산온도</span><span>${p.accumulatedGDD?.toFixed(0) || 0}°C·일</span></div>
             <div class="rp-m"><span>바이오매스</span><span>${p.totalBiomass?.toFixed(0) || 0} g/m²</span></div>
-            <div class="rp-m"><span>스트레스</span><span>${stressLabel}</span></div>
+            <div class="rp-m"><span>환경 적합도</span><span>${stressLabel}</span></div>
             <div class="rp-m"><span>토양 컨디션</span><span>${p.soilCondition || 0}%</span></div>
             <div class="rp-m"><span>연작 횟수</span><span>${p.consecutiveCrops}회</span></div>
           </div>

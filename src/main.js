@@ -335,6 +335,12 @@ class App {
     this.simulation.reset();
     this.isRunning = false;
 
+    // Reset speed UI to 1x
+    document.querySelectorAll('.speed-btn').forEach(b => {
+      b.classList.remove('active');
+      if (b.dataset.speed === '1') b.classList.add('active');
+    });
+
     // Show wizard again
     this.ui.showWizard();
   }

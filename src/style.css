@@ -1215,3 +1215,34 @@ body {
 @media (max-width: 600px) {
   .preset-panel { grid-template-columns: 1fr; }
 }
+
+/* ===== Month Bar ===== */
+.month-btn {
+  flex: 1;
+  min-width: 60px;
+  padding: 8px 4px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
+  color: var(--text-secondary);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+}
+.month-btn:hover {
+  background: rgba(255,255,255,0.08);
+  transform: translateY(-2px);
+}
+.month-active {
+  background: rgba(59,130,246,0.2) !important;
+  border-color: rgba(59,130,246,0.5) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 2px 8px rgba(59,130,246,0.3);
+}
+.month-rec {
+  border-color: rgba(16,185,129,0.4);
+  background: rgba(16,185,129,0.06);
+}
+.month-rec:not(.month-active):hover {
+  background: rgba(16,185,129,0.12);
+}
