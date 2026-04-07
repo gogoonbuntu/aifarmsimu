@@ -303,8 +303,10 @@ export class SimulationManager {
         fertilizerRatio: p.crop.fertilizerRatio,
       })),
       weatherEvents: this.weatherEventLog,
+      diseaseEvents: this.diseaseEventLog,
       stageChanges: this.stageChangeLog,
       dailyWeather: this.dailyWeatherLog,
+      robots: this.config.robots || [],
     };
 
     // Calculate grade

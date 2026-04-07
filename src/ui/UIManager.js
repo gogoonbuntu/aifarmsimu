@@ -8,7 +8,7 @@ import { cropRegistry } from '../data/crops/index.js';
 import { robotRegistry } from '../data/robots/index.js';
 import { facilityRegistry } from '../data/facilities/index.js';
 import { authService } from '../firebase/auth.js';
-import { dbService } from '../firebase/db.js';
+import { dbService, REAL_YIELD_BENCHMARKS } from '../firebase/db.js';
 
 const MONTH_KO = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
 const DRAIN_KO = { very_good:'매우양호', good:'양호', moderate:'보통', poor:'불량', very_poor:'매우불량' };
@@ -106,17 +106,27 @@ export class UIManager {
     content.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">로딩 중...</div>';
 
     try {
-      const [profile, games, leaderboard] = await Promise.all([
+      const [profile, games, leaderboard, globalStats, allCropStats] = await Promise.all([
         dbService.getUserProfile(),
         dbService.getUserGames(10),
         dbService.getLeaderboard(10),
+        dbService.getGlobalSummary(),
+        dbService.getAllCropStats(),
       ]);
 
       const gradeColors = { S: '#f59e0b', A: '#10b981', B: '#3b82f6', C: '#94a3b8', D: '#ef4444' };
 
+      // Tab buttons
+      const tabsHTML = `
+        <div style="display:flex;gap:4px;margin-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:8px;">
+          <button class="history-tab active" data-tab="records" style="padding:6px 14px;border-radius:8px 8px 0 0;border:none;background:var(--accent-green);color:#000;font-weight:700;font-size:12px;cursor:pointer;">📋 내 기록</button>
+          <button class="history-tab" data-tab="leaderboard" style="padding:6px 14px;border-radius:8px 8px 0 0;border:none;background:rgba(255,255,255,0.05);color:var(--text-muted);font-weight:600;font-size:12px;cursor:pointer;">🏆 리더보드</button>
+          <button class="history-tab" data-tab="analytics" style="padding:6px 14px;border-radius:8px 8px 0 0;border:none;background:rgba(255,255,255,0.05);color:var(--text-muted);font-weight:600;font-size:12px;cursor:pointer;">📊 시뮬 vs 현실</button>
+        </div>`;
+
       // Profile summary
       const profileHTML = profile ? `
-        <div style="display:flex;gap:16px;align-items:center;padding:16px;background:rgba(255,255,255,0.03);border-radius:12px;margin-bottom:20px;">
+        <div style="display:flex;gap:16px;align-items:center;padding:16px;background:rgba(255,255,255,0.03);border-radius:12px;margin-bottom:16px;">
           <div style="font-size:40px;">🧑‍🌾</div>
           <div style="flex:1;">
             <div style="font-size:16px;font-weight:700;color:var(--text-primary);">${profile.displayName || '농부'}</div>
@@ -130,35 +140,107 @@ export class UIManager {
           </div>
         </div>` : '';
 
-      // Game history
+      // Tab: Records
       const gamesHTML = games.length > 0 ? `
-        <h3 style="font-size:14px;margin-bottom:10px;color:var(--accent-green);">📋 최근 게임 기록</h3>
         ${games.map(g => `
           <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(255,255,255,0.02);border-radius:8px;margin-bottom:6px;border:1px solid rgba(255,255,255,0.05);">
             <span style="font-size:20px;font-weight:800;color:${gradeColors[g.grade] || '#fff'};min-width:28px;text-align:center;">${g.grade}</span>
             <div style="flex:1;font-size:12px;">
-              <div style="color:var(--text-primary);font-weight:600;">${g.climateName} · ${g.facilityName}</div>
+              <div style="color:var(--text-primary);font-weight:600;">${g.climateName} · ${g.soilName || ''} · ${g.facilityName}</div>
               <div style="color:var(--text-muted);">${g.totalDays}일 · 수확 ${g.harvestCount}건 · 고사 ${g.deadCrops}건</div>
+              ${g.harvests?.length ? `<div style="color:var(--text-muted);font-size:10px;margin-top:2px;">${g.harvests.map(h => `${h.cropIcon||''} ${h.cropName} ${h.yieldPer10a}kg/10a${h.matchRate ? ` (현실대비 ${h.matchRate}%)` : ''}`).join(' · ')}</div>` : ''}
             </div>
             <span style="font-size:13px;font-weight:700;color:${(g.profit||0) >= 0 ? 'var(--accent-green)' : '#ef4444'};">₩${Math.round(g.profit||0).toLocaleString()}</span>
           </div>
         `).join('')}` : '<div style="color:var(--text-muted);font-size:13px;">아직 게임 기록이 없습니다.</div>';
 
-      // Leaderboard
-      const lbHTML = leaderboard.length > 0 ? `
-        <h3 style="font-size:14px;margin:20px 0 10px;color:var(--accent-amber);">🏆 리더보드 (수익 TOP 10)</h3>
-        ${leaderboard.map((l, i) => `
-          <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(255,255,255,0.02);border-radius:8px;margin-bottom:4px;border:1px solid rgba(255,255,255,0.05);">
-            <span style="font-size:14px;font-weight:800;min-width:24px;color:${i < 3 ? '#f59e0b' : 'var(--text-muted)'};">${i + 1}</span>
-            <div style="flex:1;font-size:12px;">
-              <span style="color:var(--text-primary);">${l.displayName || '익명'}</span>
-              <span style="color:var(--text-muted);margin-left:8px;">${l.climateName || ''}</span>
-            </div>
-            <span style="font-size:12px;font-weight:700;color:var(--accent-green);">₩${Math.round(l.profit||0).toLocaleString()}</span>
+      // Tab: Leaderboard
+      const lbHTML = leaderboard.length > 0 ? leaderboard.map((l, i) => `
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(255,255,255,0.02);border-radius:8px;margin-bottom:4px;border:1px solid rgba(255,255,255,0.05);">
+          <span style="font-size:14px;font-weight:800;min-width:24px;color:${i < 3 ? '#f59e0b' : 'var(--text-muted)'};">${i + 1}</span>
+          <div style="flex:1;font-size:12px;">
+            <span style="color:var(--text-primary);">${l.displayName || '익명'}</span>
+            <span style="color:var(--text-muted);margin-left:8px;">${l.climateName || ''} ${l.soilName || ''}</span>
           </div>
-        `).join('')}` : '';
+          <span style="font-size:12px;font-weight:700;color:var(--accent-green);">₩${Math.round(l.profit||0).toLocaleString()}</span>
+        </div>
+      `).join('') : '<div style="color:var(--text-muted);">아직 리더보드 데이터가 없습니다.</div>';
 
-      content.innerHTML = profileHTML + gamesHTML + lbHTML;
+      // Tab: Analytics (Sim vs Reality)
+      const cropNames = { rice:'🌾 벼', potato:'🥔 감자', grape:'🍇 포도', apple:'🍎 사과', strawberry:'🍓 딸기', red_pepper:'🌶️ 고추', napa_cabbage:'🥬 배추', green_onion:'🧅 대파', sweet_potato:'🍠 고구마', tomato:'🍅 토마토' };
+      
+      let analyticsHTML = '';
+      
+      // Global summary
+      if (globalStats) {
+        const gradeLabels = ['S','A','B','C','D'];
+        const avgGradeLabel = gradeLabels[Math.round(globalStats.avgGradeScore || 2)] || 'C';
+        analyticsHTML += `
+          <div style="padding:12px;background:rgba(255,255,255,0.03);border-radius:10px;margin-bottom:12px;">
+            <div style="font-size:13px;font-weight:700;color:var(--accent-amber);margin-bottom:8px;">🌐 전체 통계</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;font-size:11px;">
+              <div style="text-align:center;"><div style="color:var(--text-muted);">총 게임 수</div><div style="font-size:18px;font-weight:800;color:var(--text-primary);">${globalStats.totalGamesPlayed || 0}</div></div>
+              <div style="text-align:center;"><div style="color:var(--text-muted);">평균 수익</div><div style="font-size:14px;font-weight:700;color:var(--accent-green);">₩${(globalStats.avgProfit||0).toLocaleString()}</div></div>
+              <div style="text-align:center;"><div style="color:var(--text-muted);">평균 등급</div><div style="font-size:18px;font-weight:800;color:${gradeColors[avgGradeLabel]};">${avgGradeLabel}</div></div>
+            </div>
+            <div style="font-size:10px;color:var(--text-muted);margin-top:6px;text-align:center;">평균 생존율 ${Math.round((globalStats.avgSurvivalRate||0)*100)}%</div>
+          </div>`;
+      }
+
+      // Crop comparison table
+      analyticsHTML += `
+        <div style="font-size:13px;font-weight:700;color:var(--accent-green);margin-bottom:8px;">📊 시뮬레이션 vs 현실 수량 비교</div>
+        <div style="overflow-x:auto;">
+        <table style="width:100%;font-size:11px;border-collapse:collapse;">
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.1);">
+            <th style="text-align:left;padding:6px 4px;color:var(--text-muted);">작물</th>
+            <th style="text-align:right;padding:6px 4px;color:var(--text-muted);">시뮬 평균</th>
+            <th style="text-align:right;padding:6px 4px;color:var(--text-muted);">현실(농진청)</th>
+            <th style="text-align:right;padding:6px 4px;color:var(--text-muted);">일치율</th>
+            <th style="text-align:center;padding:6px 4px;color:var(--text-muted);">게임수</th>
+          </tr>`;
+
+      for (const [cropId, realYield] of Object.entries(REAL_YIELD_BENCHMARKS)) {
+        const cs = allCropStats[cropId];
+        const simAvg = cs?.avgYieldPer10a || 0;
+        const matchRate = cs?.matchRate || 0;
+        const matchColor = matchRate >= 80 && matchRate <= 120 ? '#10b981' : matchRate > 0 ? '#f59e0b' : 'var(--text-muted)';
+        const matchIcon = matchRate >= 85 && matchRate <= 115 ? '✅' : matchRate > 0 ? '⚠️' : '—';
+        
+        analyticsHTML += `
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+            <td style="padding:5px 4px;color:var(--text-primary);">${cropNames[cropId] || cropId}</td>
+            <td style="text-align:right;padding:5px 4px;font-weight:600;color:var(--text-primary);">${cs ? `${simAvg.toLocaleString()}` : '—'}</td>
+            <td style="text-align:right;padding:5px 4px;color:var(--text-muted);">${realYield.toLocaleString()}</td>
+            <td style="text-align:right;padding:5px 4px;font-weight:700;color:${matchColor};">${matchRate > 0 ? `${matchIcon} ${matchRate}%` : '—'}</td>
+            <td style="text-align:center;padding:5px 4px;color:var(--text-muted);">${cs?.totalGames || 0}</td>
+          </tr>`;
+      }
+      analyticsHTML += `</table></div>
+        <div style="font-size:9px;color:var(--text-muted);margin-top:6px;">* 현실 기준: 농촌진흥청 2024년 평년 수량 (kg/10a). 일치율 85~115% = ✅ 정상</div>`;
+
+      // Combine all tabs
+      content.innerHTML = profileHTML + tabsHTML + `
+        <div class="history-tab-content" data-tab="records">${gamesHTML}</div>
+        <div class="history-tab-content hidden" data-tab="leaderboard">${lbHTML}</div>
+        <div class="history-tab-content hidden" data-tab="analytics">${analyticsHTML}</div>
+      `;
+
+      // Tab switching logic
+      content.querySelectorAll('.history-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          content.querySelectorAll('.history-tab').forEach(t => {
+            t.classList.remove('active');
+            t.style.background = 'rgba(255,255,255,0.05)';
+            t.style.color = 'var(--text-muted)';
+          });
+          tab.classList.add('active');
+          tab.style.background = 'var(--accent-green)';
+          tab.style.color = '#000';
+          content.querySelectorAll('.history-tab-content').forEach(c => c.classList.add('hidden'));
+          content.querySelector(`.history-tab-content[data-tab="${tab.dataset.tab}"]`)?.classList.remove('hidden');
+        });
+      });
     } catch (e) {
       content.innerHTML = '<div style="text-align:center;padding:40px;color:#ef4444;">기록을 불러올 수 없습니다.</div>';
     }
