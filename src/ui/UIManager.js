@@ -219,8 +219,8 @@ export class UIManager {
       },
       {
         name: '🍇 포도 프리미엄', tag: '장기 투자', color: '#8b5cf6',
-        desc: '남부내륙 + 사양토 + 유리온실 + 포도 2000m²',
-        climate: 'south_inland', soil: 'sandy_loam', facility: 'glass_venlo',
+        desc: '남부내륙 + 사양토 + 연동 비닐하우스 + 포도 2000m²',
+        climate: 'south_inland', soil: 'sandy_loam', facility: 'vinyl_multi',
         crops: [{ id: 'grape', area: 2000 }], startMonth: 3,
       },
       {

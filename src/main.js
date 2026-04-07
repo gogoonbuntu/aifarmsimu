@@ -341,6 +341,10 @@ class App {
       if (b.dataset.speed === '1') b.classList.add('active');
     });
 
+    // Hide ending screen from previous cycle
+    const endingScreen = document.getElementById('ending-screen');
+    if (endingScreen) endingScreen.classList.add('hidden');
+
     // Show wizard again
     this.ui.showWizard();
   }
