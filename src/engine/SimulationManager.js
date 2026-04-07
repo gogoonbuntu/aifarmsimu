@@ -92,6 +92,10 @@ export class SimulationManager {
     if (config.climate && config.climate.latitude) {
       this.timeManager.setLatitude(config.climate.latitude);
     }
+
+    // Set start month from strategy
+    const startMonth = config.strategy?.startMonth || 3;
+    this.timeManager.setStartMonth(startMonth);
     
     // Deduct costs
     if (config.facility && config.facility.cost) {

@@ -6,7 +6,8 @@ export class TimeManager {
   static SPEEDS = { PAUSE: 0, NORMAL: 1, FAST: 6, FASTER: 24, FASTEST: 168, ULTRA: 720 };
 
   constructor() {
-    this.gameDate = new Date(GAME_START_DATE);
+    this.startDate = new Date(GAME_START_DATE);
+    this.gameDate = new Date(this.startDate);
     this.speed = 1;
     this.totalGameHours = 0;
     this.isPaused = false;
@@ -14,6 +15,15 @@ export class TimeManager {
     this.accumulatedDelta = 0;
     this.lastHourEmitted = -1;
     this.latitude = 36.5; // Default: central Korea
+  }
+
+  setStartMonth(month) {
+    // month: 1-12
+    this.startDate = new Date(2026, month - 1, 1);
+    this.gameDate = new Date(this.startDate);
+    this.totalGameHours = 0;
+    this.accumulatedDelta = 0;
+    this.lastHourEmitted = -1;
   }
 
   setLatitude(lat) {
@@ -37,7 +47,7 @@ export class TimeManager {
 
     // Update game date
     const totalMs = this.totalGameHours * 3600 * 1000;
-    this.gameDate = new Date(GAME_START_DATE.getTime() + totalMs);
+    this.gameDate = new Date(this.startDate.getTime() + totalMs);
 
     // Emit hourly tick
     const currentHour = Math.floor(this.totalGameHours);

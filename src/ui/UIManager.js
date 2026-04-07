@@ -197,45 +197,48 @@ export class UIManager {
 
   // ===== PRESET RECIPES =====
   setupPresets() {
+    // 각 프리셋의 startMonth는 해당 작물의 calendar 데이터 기반
     const presets = [
       {
         name: '🍓 딸기 S등급', tag: '수익 최고', color: '#10b981',
         desc: '중부내륙 + 충적양토 + 단동 비닐하우스 + 딸기 3000m²',
         climate: 'central_inland', soil: 'loam_alluvial', facility: 'vinyl_single',
-        crops: [{ id: 'strawberry', area: 3000 }],
+        crops: [{ id: 'strawberry', area: 3000 }], startMonth: 9,
       },
       {
         name: '🌾 벼 안정 수익', tag: '안정', color: '#3b82f6',
         desc: '남부내륙 + 논 글라이토 + 노지 + 벼 5000m²',
         climate: 'south_inland', soil: 'paddy_gley', facility: 'open_field',
-        crops: [{ id: 'rice', area: 5000 }],
+        crops: [{ id: 'rice', area: 5000 }], startMonth: 4,
       },
       {
         name: '🌶️ 고추 고수익', tag: '고위험 고수익', color: '#f59e0b',
         desc: '남부내륙 + 충적양토 + 비닐하우스 + 고추 2000m²',
         climate: 'south_inland', soil: 'loam_alluvial', facility: 'vinyl_single',
-        crops: [{ id: 'red_pepper', area: 2000 }],
+        crops: [{ id: 'red_pepper', area: 2000 }], startMonth: 4,
       },
       {
         name: '🍇 포도 프리미엄', tag: '장기 투자', color: '#8b5cf6',
         desc: '남부내륙 + 사양토 + 유리온실 + 포도 2000m²',
         climate: 'south_inland', soil: 'sandy_loam', facility: 'glass_venlo',
-        crops: [{ id: 'grape', area: 2000 }],
+        crops: [{ id: 'grape', area: 2000 }], startMonth: 3,
       },
       {
         name: '🥔 감자 초보용', tag: '쉬움', color: '#ec4899',
-        desc: '중부내륙 + 사양토 + 노지 + 감자 3000m² (3월 파종 적합)',
-        climate: 'central_inland', soil: 'sandy_loam', facility: 'open_field',
-        crops: [{ id: 'potato', area: 3000 }],
+        desc: '고냉지(대관령) + 산악갈색토 + 노지 + 감자 3000m²',
+        climate: 'highland', soil: 'mountain_brown', facility: 'open_field',
+        crops: [{ id: 'potato', area: 3000 }], startMonth: 5,
       },
       {
         name: '🌾🥬 복합 영농', tag: '분산 투자', color: '#06b6d4',
-        desc: '중부내륙 + 충적양토 + 비닐하우스 + 벼 2000m² + 배추 1500m² + 대파 1500m²',
+        desc: '중부내륙 + 충적양토 + 비닐하우스 + 벼·배추·대파',
         climate: 'central_inland', soil: 'loam_alluvial', facility: 'vinyl_single',
         crops: [{ id: 'rice', area: 2000 }, { id: 'napa_cabbage', area: 1500 }, { id: 'green_onion', area: 1500 }],
+        startMonth: 4,
       },
     ];
 
+    const monthNames = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
     const panel = document.getElementById('preset-panel');
     panel.innerHTML = presets.map((p, i) => `
       <div class="preset-card" data-idx="${i}" style="border-left:3px solid ${p.color};">
@@ -244,30 +247,24 @@ export class UIManager {
           <span class="preset-tag" style="background:${p.color}20;color:${p.color};">${p.tag}</span>
         </div>
         <div class="preset-card-desc">${p.desc}</div>
+        <div style="font-size:10px;margin-top:4px;color:${p.color};font-weight:700;">📅 파종: ${monthNames[p.startMonth - 1]}</div>
       </div>
     `).join('');
 
-    // Toggle panel
     document.getElementById('preset-btn')?.addEventListener('click', () => {
       panel.classList.toggle('hidden');
     });
 
-    // Apply preset
     panel.querySelectorAll('.preset-card').forEach(card => {
       card.addEventListener('click', () => {
         const idx = parseInt(card.dataset.idx);
         const preset = presets[idx];
-
         this.config.climate = climateRegistry.get(preset.climate);
         this.config.soil = soilRegistry.get(preset.soil);
         this.config.facility = facilityRegistry.get(preset.facility);
-        this.config.crops = preset.crops.map(c => ({
-          data: cropRegistry.get(c.id),
-          area: c.area,
-        }));
+        this.config.crops = preset.crops.map(c => ({ data: cropRegistry.get(c.id), area: c.area }));
         this.config.robots = [];
-
-        // Jump to step 6
+        this.config.strategy.startMonth = preset.startMonth;
         panel.classList.add('hidden');
         this.wizardStep = 6;
         this.updateWizardSteps();
@@ -822,12 +819,12 @@ export class UIManager {
         <h3>✅ 최종 확인</h3>
         <p>선택한 내용을 확인하고 시뮬레이션을 시작하세요.</p>
       </div>
-      <div class="confirm-grid">
+      <div class="confirm-grid" style="grid-template-columns:repeat(5,1fr);">
         <div class="confirm-section">
           <div class="confirm-icon">🌍</div>
           <h4>기후 구역</h4>
           <div class="confirm-value">${climate?.name.ko || '-'}</div>
-          <div class="confirm-sub">${climate?.regions.join(', ') || ''} · ${climate?.annualTemp}°C · ${climate?.annualRainfall}mm</div>
+          <div class="confirm-sub">${climate?.regions.join(', ') || ''} · ${climate?.annualTemp}°C</div>
         </div>
         <div class="confirm-section">
           <div class="confirm-icon" style="width:32px;height:32px;border-radius:50%;background:#${(soil?.color || 0).toString(16).padStart(6,'0')};margin:0 auto 8px"></div>
@@ -840,6 +837,14 @@ export class UIManager {
           <h4>시설</h4>
           <div class="confirm-value">${facility?.name.ko || '노지'}</div>
           <div class="confirm-sub">${facilityCost > 0 ? formatCurrency(facilityCost) : '무료'}</div>
+        </div>
+        <div class="confirm-section">
+          <div class="confirm-icon">📅</div>
+          <h4>파종 시작</h4>
+          <select id="start-month-select" style="padding:6px 10px;border-radius:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:var(--text-primary);font-size:13px;font-weight:700;text-align:center;cursor:pointer;width:100%;">
+            ${[1,2,3,4,5,6,7,8,9,10,11,12].map(m => `<option value="${m}" ${m === (this.config.strategy.startMonth || 3) ? 'selected' : ''}>${m}월</option>`).join('')}
+          </select>
+          <div class="confirm-sub" id="start-month-temp" style="margin-top:4px;"></div>
         </div>
         <div class="confirm-section">
           <div class="confirm-icon">💰</div>
@@ -961,6 +966,22 @@ export class UIManager {
         btn.textContent = '📗 성공 공식 보기 ▼';
       }
     });
+
+    // Start month selector
+    const monthSelect = document.getElementById('start-month-select');
+    const updateMonthInfo = () => {
+      const m = parseInt(monthSelect.value);
+      this.config.strategy.startMonth = m;
+      const tempEl = document.getElementById('start-month-temp');
+      if (climate?.monthly?.avgTemp) {
+        const t = climate.monthly.avgTemp[m - 1];
+        const tMin = climate.monthly.minTemp[m - 1];
+        tempEl.innerHTML = `평균 ${t}°C / 최저 ${tMin}°C`;
+        tempEl.style.color = tMin < 0 ? '#ef4444' : tMin < 5 ? '#f59e0b' : 'var(--accent-green)';
+      }
+    };
+    monthSelect?.addEventListener('change', updateMonthInfo);
+    updateMonthInfo(); // Show initial value
   }
 
   renderFacilityWarnings(crops, facility) {
