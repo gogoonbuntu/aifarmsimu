@@ -195,6 +195,14 @@ export class UIManager {
     });
   }
 
+  // ===== DOCS HELPER =====
+  docUrl(type, id) {
+    return `https://github.com/gogoonbuntu/aifarmsimu/blob/main/docs/${type}/${id}.md`;
+  }
+  docBtn(type, id, name) {
+    return `<button class="doc-help-btn" data-doc-type="${type}" data-doc-id="${id}" data-doc-name="${name}" title="상세 문서 보기" onclick="event.stopPropagation();if(confirm('📚 ${name}에 대한 상세 과학 문서를 읽어볼까요?'))window.open('${this.docUrl(type, id)}','_blank')">?</button>`;
+  }
+
   // ===== PRESET RECIPES =====
   setupPresets() {
     // 각 프리셋의 startMonth는 해당 작물의 calendar 데이터 기반
@@ -359,6 +367,7 @@ export class UIManager {
       <div class="card-grid">
         ${climates.map(c => `
           <div class="select-card ${this.config.climate?.id === c.id ? 'selected' : ''}" data-id="${c.id}">
+            ${this.docBtn('climate', c.id, c.name.ko)}
             <div class="card-icon">${this.getClimateIcon(c.id)}</div>
             <div class="card-title">${c.name.ko}</div>
             <div class="card-desc">${c.regions.join(', ')}</div>
@@ -452,6 +461,7 @@ export class UIManager {
           const isRec = recIds.includes(s.id);
           return `
           <div class="select-card ${this.config.soil?.id === s.id ? 'selected' : ''}" data-id="${s.id}">
+            ${this.docBtn('soils', s.id, s.name.ko)}
             ${isRec ? '<span class="rec-badge">⭐ 이 지역 추천</span>' : ''}
             <div class="soil-color-icon" style="background:${colorHex}"></div>
             <div class="card-title">${s.name.ko}</div>
@@ -604,6 +614,7 @@ export class UIManager {
                 if (sens.wind >= 0.7) sensItems.push('💨 바람약함');
                 return `
                 <div class="crop-detail-card ${sel ? 'selected' : ''}" data-id="${c.id}">
+                  ${this.docBtn('crops', c.id, c.name.ko)}
                   <div class="crop-card-left">
                     <div class="crop-big-icon">${c.icon}</div>
                     <div class="crop-select-check">${sel ? '✓' : ''}</div>
@@ -1479,6 +1490,8 @@ export class UIManager {
           <div class="report-crop-header">
             <span style="font-size:28px;">${p.cropIcon || '🌱'}</span>
             <div><strong style="font-size:16px;">${p.cropName}</strong>
+            <a href="https://github.com/gogoonbuntu/aifarmsimu/blob/main/docs/crops/${p.cropId || 'rice'}.md" target="_blank" rel="noopener"
+               style="display:inline-block;margin-left:6px;padding:2px 8px;border-radius:6px;font-size:10px;background:rgba(99,102,241,0.15);color:#818cf8;text-decoration:none;font-weight:600;">📚 상세 문서</a>
             <div style="font-size:12px;color:var(--text-muted);">${stageKo[p.currentStage] || p.currentStage} · ${p.daysSincePlanting}일 재배</div></div>
             <span class="report-status-badge" style="background:${p.isHarvested ? 'var(--accent-green)' : p.isAlive ? 'var(--accent-blue)' : '#ef4444'};">
               ${p.isHarvested ? '수확 완료' : p.isAlive ? '생육중' : '고사'}
