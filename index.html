@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AI 농장 시뮬레이션 - 과학적 작물 성장 모델 기반 3D 농업 시뮬레이터" />
+  <title>AI Farm Simulation | AI 농장 시뮬레이션</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <!-- 3D Canvas -->
+  <div id="canvas-container"></div>
+
+  <!-- Setup Wizard Overlay -->
+  <div id="setup-wizard" class="overlay">
+    <div class="wizard-container">
+      <h1 class="wizard-title">🌾 AI 농장 시뮬레이션</h1>
+      <p class="wizard-subtitle">과학적 작물 성장 모델 기반 가상 농업 시뮬레이터</p>
+      
+      <!-- Steps are built dynamically by UIManager -->
+      <div class="wizard-steps"></div>
+
+      <div id="wizard-content" class="wizard-content"></div>
+
+      <div class="wizard-nav">
+        <button id="wizard-prev" class="btn btn-secondary" disabled>◀ 이전</button>
+        <button id="wizard-next" class="btn btn-primary">다음 ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game UI Overlay -->
+  <div id="game-ui" class="hidden">
+    <!-- Top Bar -->
+    <div id="top-bar">
+      <div class="top-left">
+        <span id="game-date" class="info-badge date-badge">📅 2026년 3월 1일</span>
+        <span id="game-time" class="info-badge time-badge">🕐 06:00</span>
+        <span id="game-weather" class="info-badge weather-badge">☀️ 맑음 12°C</span>
+        <span id="game-humidity" class="info-badge humidity-badge">💧 55%</span>
+        <span id="game-sun-times" class="info-badge sun-badge">🌅 06:12 🌇 18:34</span>
+      </div>
+      <div class="top-center">
+        <div id="time-controls">
+          <button class="speed-btn" data-speed="0" title="일시정지">⏸</button>
+          <button class="speed-btn active" data-speed="1" title="1x (1시간/초)">▶</button>
+          <button class="speed-btn" data-speed="6" title="6x (1일/4초)">▶▶</button>
+          <button class="speed-btn" data-speed="24" title="24x (1일/초)">▶▶▶</button>
+          <button class="speed-btn" data-speed="168" title="168x (1주/초)">⏩</button>
+          <button class="speed-btn" data-speed="720" title="720x (1달/초)">⏩⏩</button>
+        </div>
+      </div>
+      <div class="top-right">
+        <span id="game-fund" class="info-badge fund-badge">💰 ₩50,000,000</span>
+      </div>
+    </div>
+
+    <!-- Temperature / Weather Banner -->
+    <div id="weather-banner">
+      <div id="temp-display">
+        <span id="temp-value" class="temp-big">12.0</span>
+        <span class="temp-unit">°C</span>
+      </div>
+      <div id="temp-range">
+        <span id="temp-min" class="temp-small">↓ 5°C</span>
+        <span id="temp-max" class="temp-small">↑ 18°C</span>
+      </div>
+      <div id="weather-icon-display"></div>
+    </div>
+
+    <!-- Side Panel -->
+    <div id="side-panel">
+      <div class="panel-section">
+        <h3 class="panel-title">📊 농장 현황</h3>
+        <div id="farm-stats"></div>
+      </div>
+      <div class="panel-section">
+        <h3 class="panel-title">🌱 작물 현황</h3>
+        <div id="crop-status"></div>
+      </div>
+      <div class="panel-section">
+        <h3 class="panel-title">🤖 장비 현황</h3>
+        <div id="robot-status"></div>
+      </div>
+      <div class="panel-section">
+        <h3 class="panel-title">🧑‍🌾 농부</h3>
+        <div id="farmer-status"></div>
+        <div id="farmer-actions" class="farmer-actions">
+          <button class="farmer-btn water-btn" id="btn-manual-water" title="수동 관수">💧 물주기</button>
+          <button class="farmer-btn fert-btn" id="btn-manual-fertilize" title="수동 비료">🌿 비료주기</button>
+          <button class="farmer-btn harvest-btn" id="btn-manual-harvest" title="수동 수확">🌾 수확하기</button>
+        </div>
+      </div>
+      <div class="panel-section">
+        <h3 class="panel-title">🏔️ 토양 상태</h3>
+        <div id="soil-status"></div>
+      </div>
+      <div class="panel-section">
+        <h3 class="panel-title clickable" id="strategy-toggle">⚡ 전략 패널 ▼</h3>
+        <div id="strategy-panel" class="collapsed"></div>
+      </div>
+    </div>
+
+    <!-- Event Log -->
+    <div id="event-log">
+      <div class="log-header">📋 이벤트 로그</div>
+      <div id="log-entries"></div>
+    </div>
+
+    <!-- Crop Detail Panel -->
+    <div id="crop-detail" class="hidden">
+      <button id="close-detail" class="close-btn">✕</button>
+      <div id="detail-content"></div>
+    </div>
+
+    <!-- Results Panel -->
+    <div id="results-panel" class="hidden overlay">
+      <div class="results-container">
+        <h2>🎉 수확 결과</h2>
+        <div id="results-content"></div>
+        <button id="results-close" class="btn btn-primary">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Event Alert Modal (특수 이벤트 일시정지 교육 팝업) -->
+  <div id="event-alert-modal" class="overlay hidden">
+    <div class="event-alert-container">
+      <div id="event-alert-icon" class="event-alert-icon">⚠️</div>
+      <h2 id="event-alert-title" class="event-alert-title">특수 상황 발생!</h2>
+      <div id="event-alert-body" class="event-alert-body"></div>
+      <div id="event-alert-tip" class="event-alert-tip"></div>
+      <button id="event-alert-confirm" class="btn btn-primary event-alert-btn">확인하고 계속하기 ▶</button>
+    </div>
+  </div>
+
+  <!-- Ending Screen Overlay -->
+  <div id="ending-screen" class="overlay hidden">
+    <div class="ending-container">
+      <div id="ending-content"></div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
